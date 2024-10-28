@@ -1,3 +1,6 @@
+const OTP = require("../models/OtpModel");
+const otpGenerator = require("otp-generator");
+
 const createOtp = async (email) => {
   let otp = otpGenerator.generate(6, {
     upperCaseAlphabets: false,

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      default: "trainee",
       enum: {
         values: ["admin", "trainer", "trainee"],
         message: "Please choose a valid role (admin, trainer, or trainee).",
@@ -40,12 +41,18 @@ const userSchema = new mongoose.Schema(
     lastLogin: { type: Date },
     gender: { type: String },
     isVerified: { type: Boolean, default: false },
-    otp: { type: String },
+    pendingPasswordChange: { type: Boolean, default: false },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
 
 // // Verification method
 // userSchema.methods.verifyUser = function () {
