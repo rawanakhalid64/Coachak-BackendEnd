@@ -33,15 +33,19 @@
 # Development Stage
 FROM node:23-slim AS dev
 WORKDIR /app
-COPY backend/package*.json ./
+# Copy package.json and package-lock.json from the root
+COPY package*.json ./  
 RUN npm set registry https://registry.npmjs.org/ && npm install --only=development && npm cache clean --force
-COPY backend/ .
+ # Copy all files from the root to /app
+COPY . . 
 CMD ["npx", "nodemon", "index.js"]
 
 # Production Stage
 FROM node:23-slim AS pro
 WORKDIR /app
-COPY backend/package*.json ./
+# Copy package.json and package-lock.json from the root
+COPY package*.json ./  
 RUN npm install --only=production && npm cache clean --force
-COPY backend/ .
+# Copy all files from the root to /app
+COPY . .  
 CMD ["node", "index.js"]
