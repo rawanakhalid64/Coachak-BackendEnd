@@ -22,13 +22,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: rawana11/coachak-backend  # Replace with your Docker Hub repository name
+          images: rawana11/coachak-backend
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .  # This assumes Dockerfile.backend is in the root directory
-          file: ./Dockerfile.backend  # Specify the custom Dockerfile name here
+          context: ./backend  # Adjust if your Dockerfile.backend is in backend directory
+          file: ./backend/Dockerfile.backend  # Full path to Dockerfile.backend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
