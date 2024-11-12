@@ -173,6 +173,38 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
+// exports.resetPassword = async (req, res, next) => {
+//   try {
+//     const { email, password, confirmPassword } = req.body;
+//     console.log("Request body:", req.body);
+//     // Check if passwords match
+//     if (password !== confirmPassword) {
+//       return res
+//         .status(400)
+//         .json({ error: "Password and confirmed password do not match." });
+//     }
+
+//     // Find the user by email and pendingPasswordChange status
+//     const user = await User.findOne({ email, pendingPasswordChange: true });
+//      // Log the result of the user query
+//      console.log("User found:", user);
+//     if (!user) {
+//       return res.status(400).json({ error: "Cannot change password" });
+//     }
+
+//     // Update the password and reset pendingPasswordChange status
+//     user.password = password;
+//     user.pendingPasswordChange = false;
+//     await user.save();
+
+//     // Send success response
+//     res.status(201).json({ message: "Password changed successfully" });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
+
 exports.sendOtp = async (req, res, next) => {
   try {
     const { email } = req.body;
