@@ -31,10 +31,10 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "trainee",
+      default: "client",
       enum: {
-        values: ["admin", "trainer", "trainee"],
-        message: "Please choose a valid role (admin, trainer, or trainee).",
+        values: ["admin", "trainer", "client"],
+        message: "Please choose a valid role (admin, trainer, or client).",
       },
       required: [true, "Role is required."],
     },
@@ -42,6 +42,66 @@ const userSchema = new mongoose.Schema(
     gender: { type: String },
     isVerified: { type: Boolean, default: false },
     pendingPasswordChange: { type: Boolean, default: false },
+
+    areaOfExpertise: {
+      type: mongoose.Schema.ObjectId,
+      ref: "AreaOfExpertise",
+    },
+
+    // for client
+    weight: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
+    job: {
+      type: String,
+    },
+    fitnessLevel: {
+      type: String,
+      enum: {
+        values: ["beginner", "intermediate", "advanced"],
+        message:
+          "Please choose a valid fitness lever (beginner, intermediate, advanced).",
+      },
+    },
+    fitnessGoal: {
+      type: String,
+      enum: {
+        values: ["loseWeight", "gainMuscles", "wightLifting", "diet"],
+        message:
+          "Please choose a valid fitness lever (loseWeight, gainMuscles, wightLifting, diet).",
+      },
+    },
+    healthCondition: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "HealthCondition",
+      },
+    ],
+    allergy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Allergy",
+      },
+    ],
+    // for trainers
+    bio: { type: String },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    avgRating: {
+      type: String,
+      default: 0,
+      min: 1,
+      max: 5,
+    },
+    pricePerSession: {
+      type: Number,
+      required: [true, "please provide a price per session"],
+    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
