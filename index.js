@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 const authRouter = require("./routes/authRoute");
+const userRoute = require("./routes/userRoute");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRoute);
 
 // Global error handler
 app.use((err, req, res, next) => {

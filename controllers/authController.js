@@ -5,6 +5,31 @@ const createOtp = require("../utils/createOtp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verifyOtp } = require("../utils/verifyOtp");
+const Trainer = require("../models/Trainer");
+
+exports.protect = async (req, res, next) => {
+  try {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token)
+      return next(new AppError("you are not logged in to access.", 401));
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decoded.id);
+    console.log(user);
+    req.user = user;
+    next();
+  } catch (error) {
+    console.log(error);
+    res
+      .status(400)
+      .json({ message: "you don't have the permisions to modify changes" });
+  }
+};
 exports.register = async (req, res, next) => {
   try {
     const {
@@ -14,6 +39,7 @@ exports.register = async (req, res, next) => {
       phoneNumber,
       dateOfBirth,
       password,
+      role,
       confirmPassword,
     } = req.body;
     if (password !== confirmPassword) {
@@ -25,15 +51,17 @@ exports.register = async (req, res, next) => {
       return res.status(400).json({ error: "email is already existed." });
     }
 
-    const user = await User.create({
+    const user = new User({
       email,
       firstName,
       lastName,
       phoneNumber,
       dateOfBirth,
+      role,
       password,
     });
-    console.log(user);
+    await user.save();
+    // user.userTuserT
     if (user) {
       createOtp(email);
     }
