@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const allergySchema = new mongoose.Schema({
   name: {
     type: String,
+    unique: true,
     required: [true, "please add a name for allergy"],
   },
   description: {

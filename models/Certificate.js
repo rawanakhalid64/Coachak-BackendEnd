@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
-const certificationSchema = new mongoose.Schema(
+const certificateSchema = new mongoose.Schema(
   {
+    credintialId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
     name: {
       type: String,
       required: [true, "please add a name for cerificate"],
@@ -18,14 +22,10 @@ const certificationSchema = new mongoose.Schema(
     expirationDate: {
       type: Date,
     },
-    credintialId: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-const AreaOfExperise = mongoose.model("AreaOfExperise", certificationSchema);
-module.exports = AreaOfExperise;
+const Certificate = mongoose.model("Certificate", certificateSchema);
+module.exports = Certificate;

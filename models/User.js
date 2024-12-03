@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
+      unique: [true, "phone number already exists."],
       required: [true, "Please provide a phone number."],
     },
     // role: {
@@ -52,9 +53,6 @@ const userSchema = new mongoose.Schema(
         "https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg",
       type: String,
     },
-    // for client
-
-    // for trainers
   },
   {
     discriminatorKey: "role",
