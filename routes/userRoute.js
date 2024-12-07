@@ -7,8 +7,8 @@ const {
 } = require("../controllers/UserController");
 const { protect } = require("../controllers/authController");
 const route = express.Router();
-route.route("/update-me").patch(protect, updateProfile);
-route.route("/get-me").get(protect, getMyProfile);
-route.route("/:id").get(protect, getProfile);
+route.use(protect);
+route.route("/me").get(getMyProfile).patch(updateProfile);
+route.route("/:id").get(getProfile);
 
 module.exports = route;

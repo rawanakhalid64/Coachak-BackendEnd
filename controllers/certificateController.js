@@ -14,7 +14,7 @@ exports.getTrainersCertificates = async (req, res, next) => {
   try {
     console.log(req.body);
     const certificate = await Certificate.find({
-      credintialId: req.body.credintialId,
+      credintialId: req.params.trainerId,
     });
     res
       .status(200)

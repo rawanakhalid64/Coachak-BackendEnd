@@ -26,10 +26,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/user", userRoute);
-app.use("/api/v1/certificate", certificateRoute);
-app.use("/api/v1/allergy", allergyRoute);
-app.use("/api/v1/health-condition", healthConditionRoute);
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/certificates", certificateRoute);
+app.use("/api/v1/allergies", allergyRoute);
+app.use("/api/v1/health-conditions", healthConditionRoute);
 
 // Global error handler
 app.use((err, req, res, next) => {
