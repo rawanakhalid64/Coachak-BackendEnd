@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Please provide a password."],
+<<<<<<< HEAD
       minlength: [8, "Password must be at least 8 characters long."],
+=======
+      minlength: [8, "Password must be at least 6 characters long."],
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
     },
     dateOfBirth: {
       type: Date,
@@ -27,6 +31,7 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
+<<<<<<< HEAD
       unique: [true, "phone number already exists."],
       required: [true, "Please provide a phone number."],
     },
@@ -39,10 +44,24 @@ const userSchema = new mongoose.Schema(
     //   },
     //   required: [true, "Role is required."],
     // },
+=======
+      required: [true, "Please provide a phone number."],
+    },
+    role: {
+      type: String,
+      default: "trainee",
+      enum: {
+        values: ["admin", "trainer", "trainee"],
+        message: "Please choose a valid role (admin, trainer, or trainee).",
+      },
+      required: [true, "Role is required."],
+    },
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
     lastLogin: { type: Date },
     gender: { type: String },
     isVerified: { type: Boolean, default: false },
     pendingPasswordChange: { type: Boolean, default: false },
+<<<<<<< HEAD
 
     areaOfExpertise: {
       type: mongoose.Schema.ObjectId,
@@ -56,6 +75,10 @@ const userSchema = new mongoose.Schema(
   },
   {
     discriminatorKey: "role",
+=======
+  },
+  {
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
@@ -73,5 +96,8 @@ userSchema.pre("save", async function (next) {
 // };
 
 const User = mongoose.model("User", userSchema);
+<<<<<<< HEAD
 User.discriminator("trainer", new mongoose.Schema());
+=======
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
 module.exports = User;

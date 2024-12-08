@@ -5,6 +5,7 @@ const createOtp = require("../utils/createOtp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verifyOtp } = require("../utils/verifyOtp");
+<<<<<<< HEAD
 const Trainer = require("../models/Trainer");
 
 exports.protect = async (req, res, next) => {
@@ -30,6 +31,8 @@ exports.protect = async (req, res, next) => {
       .json({ message: "you don't have the permisions to modify changes" });
   }
 };
+=======
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
 exports.register = async (req, res, next) => {
   try {
     const {
@@ -39,7 +42,10 @@ exports.register = async (req, res, next) => {
       phoneNumber,
       dateOfBirth,
       password,
+<<<<<<< HEAD
       role,
+=======
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
       confirmPassword,
     } = req.body;
     if (password !== confirmPassword) {
@@ -51,17 +57,27 @@ exports.register = async (req, res, next) => {
       return res.status(400).json({ error: "email is already existed." });
     }
 
+<<<<<<< HEAD
     const user = new User({
+=======
+    const user = await User.create({
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
       email,
       firstName,
       lastName,
       phoneNumber,
       dateOfBirth,
+<<<<<<< HEAD
       role,
       password,
     });
     await user.save();
     // user.userTuserT
+=======
+      password,
+    });
+    console.log(user);
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
     if (user) {
       createOtp(email);
     }
@@ -201,6 +217,41 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+// exports.resetPassword = async (req, res, next) => {
+//   try {
+//     const { email, password, confirmPassword } = req.body;
+//     console.log("Request body:", req.body);
+//     // Check if passwords match
+//     if (password !== confirmPassword) {
+//       return res
+//         .status(400)
+//         .json({ error: "Password and confirmed password do not match." });
+//     }
+
+//     // Find the user by email and pendingPasswordChange status
+//     const user = await User.findOne({ email, pendingPasswordChange: true });
+//      // Log the result of the user query
+//      console.log("User found:", user);
+//     if (!user) {
+//       return res.status(400).json({ error: "Cannot change password" });
+//     }
+
+//     // Update the password and reset pendingPasswordChange status
+//     user.password = password;
+//     user.pendingPasswordChange = false;
+//     await user.save();
+
+//     // Send success response
+//     res.status(201).json({ message: "Password changed successfully" });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
+
+>>>>>>> 87c89363440156aea40690d4230ba6dc9a91463e
 exports.sendOtp = async (req, res, next) => {
   try {
     const { email } = req.body;
