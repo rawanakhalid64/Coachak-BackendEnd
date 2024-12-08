@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     discriminatorKey: "role",
-    timestamps: true, // Automatically manage createdAt and updatedAt
+    timestamps: true,
   }
 );
 userSchema.pre("save", async function (next) {
