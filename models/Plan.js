@@ -27,10 +27,12 @@ const planSchema = new mongoose.Schema(
       type: Boolean,
       required: [true, "does the plan has nutrition plan?"],
     },
-    subscription: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Subscription",
-    },
+    subscription: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Subscription",
+      },
+    ],
   },
   { timestamps: true }
 );
