@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const trainingPlanSchema = new mongoose.Schema(
   {
+    trainer: { type: mongoose.Schema.ObjectId, ref: "Trainer" },
     title: { type: String },
     goal: { type: String },
     descritpion: { type: String },

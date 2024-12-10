@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const foodSchema = new mongoose.Schema({
+  creator: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Trainer",
+  },
   name: {
     type: Number,
     required: [true, "please provide a name for the meal"],
@@ -9,7 +13,7 @@ const foodSchema = new mongoose.Schema({
     type: Number,
     required: [true, "please provide number of calories per 100g"],
   },
-  protien: {
+  protein: {
     type: Number,
     required: [true, "please provide number of protein grams per 100g"],
   },

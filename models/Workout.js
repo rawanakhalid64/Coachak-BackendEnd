@@ -9,7 +9,7 @@ const workoutSchema = new mongoose.Schema(
       type: String,
       required: [true, "please provide name for the workout day"],
     },
-    exercise: [
+    exercises: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "Exercise",
