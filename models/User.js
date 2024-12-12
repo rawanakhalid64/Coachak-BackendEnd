@@ -66,12 +66,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// // Verification method
-// userSchema.methods.verifyUser = function () {
-//   this.isVerified = true;
-//   return this.save(); // Save the updated user document
-// };
-
 const User = mongoose.model("User", userSchema);
 User.discriminator("trainer", new mongoose.Schema());
 module.exports = User;
