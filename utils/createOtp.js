@@ -17,8 +17,6 @@ const createOtp = async (email) => {
     result = await OTP.findOne({ otp });
   }
   const otpBody = await OTP.create({ email, otp });
-  
- 
 };
 
 module.exports = createOtp;

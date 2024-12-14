@@ -1,10 +1,23 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+const cors = require("cors"); // Import CORS package
 const authRouter = require("./routes/authRoute");
+const userRoute = require("./routes/userRoute");
+const allergyRoute = require("./routes/allergyRoute");
+const healthConditionRoute = require("./routes/healthConditionRoute");
+const certificateRoute = require("./routes/certificateRoute");
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require('cors');
+
 const app = express();
+
+
+app.use(cors({
+  origin: 'http://localhost:3000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+  credentials: true,
+}));
 
 const connectDb = async () => {
   try {
@@ -17,11 +30,15 @@ const connectDb = async () => {
 };
 
 connectDb();
-app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/certificate", certificateRoute);
+app.use("/api/v1/allergy", allergyRoute);
+app.use("/api/v1/health-condition", healthConditionRoute);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -34,7 +51,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+app.get("/", (req, res) => {
+  res.send("welcome to coachak");
+});
+
+const PORT = process.env.PORT || 3001; // Make sure the backend is running on port 3001
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

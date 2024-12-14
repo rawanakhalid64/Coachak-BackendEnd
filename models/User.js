@@ -27,24 +27,36 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
+      unique: [true, "phone number already exists."],
       required: [true, "Please provide a phone number."],
     },
-    role: {
-      type: String,
-      default: "trainee",
-      enum: {
-        values: ["admin", "trainer", "trainee"],
-        message: "Please choose a valid role (admin, trainer, or trainee).",
-      },
-      required: [true, "Role is required."],
-    },
+    // role: {
+    //   type: String,
+    //   default: "client",
+    //   enum: {
+    //     values: ["admin", "trainer", "client"],
+    //     message: "Please choose a valid role (admin, trainer, or client).",
+    //   },
+    //   required: [true, "Role is required."],
+    // },
     lastLogin: { type: Date },
     gender: { type: String },
     isVerified: { type: Boolean, default: false },
     pendingPasswordChange: { type: Boolean, default: false },
+
+    areaOfExpertise: {
+      type: mongoose.Schema.ObjectId,
+      ref: "AreaOfExpertise",
+    },
+    profilePhoto: {
+      default:
+        "https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg",
+      type: String,
+    },
   },
   {
-    timestamps: true, // Automatically manage createdAt and updatedAt
+    discriminatorKey: "role",
+    timestamps: true,
   }
 );
 userSchema.pre("save", async function (next) {
@@ -61,4 +73,5 @@ userSchema.pre("save", async function (next) {
 // };
 
 const User = mongoose.model("User", userSchema);
+User.discriminator("trainer", new mongoose.Schema());
 module.exports = User;
