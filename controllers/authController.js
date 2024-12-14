@@ -50,7 +50,7 @@ exports.register = async (req, res, next) => {
     if (await User.findOne({ email })) {
       return res.status(400).json({ error: "email is already existed." });
     }
-
+    console.log("g");
     const user = new User({
       email,
       firstName,

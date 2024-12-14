@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const ingredientSchema = new mongoose.Schema({
+  creator: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Trainer",
+  },
   quantity: {
     type: Number,
     required: [true, "please provide a quantity for the meal"],

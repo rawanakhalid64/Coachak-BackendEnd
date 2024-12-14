@@ -41,11 +41,11 @@ COPY . .
 CMD ["npx", "nodemon", "index.js"]
 
 # Production Stage
-FROM node:23-slim AS pro
-WORKDIR /app
-# Copy package.json and package-lock.json from the root
-COPY package*.json ./  
-RUN npm install --only=production && npm cache clean --force
-# Copy all files from the root to /app
-COPY . .  
-CMD ["node", "index.js"]
+# FROM node:23-slim AS pro
+# WORKDIR /app
+# # Copy package.json and package-lock.json from the root
+# COPY package*.json ./  
+# RUN npm install --only=production && npm cache clean --force
+# # Copy all files from the root to /app
+# COPY . .  
+# CMD ["node", "index.js"]

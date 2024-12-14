@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const mealSchema = new mongoose.Schema({
+  creator: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Trainer",
+  },
   name: {
     type: String,
     required: [true, "please provide name for the meal"],

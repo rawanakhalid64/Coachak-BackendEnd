@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 const planSchema = new mongoose.Schema(
   {
-    name: {
+    trainer: {
       type: String,
-      required: [true, "please add a name for plan"],
+      required: [true, "please add trainer id"],
+    },
+    title: {
+      type: String,
+      required: [true, "please add a title for plan"],
     },
     description: {
       type: String,
@@ -27,10 +31,12 @@ const planSchema = new mongoose.Schema(
       type: Boolean,
       required: [true, "does the plan has nutrition plan?"],
     },
-    subscription: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Subscription",
-    },
+    subscription: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Subscription",
+      },
+    ],
   },
   { timestamps: true }
 );

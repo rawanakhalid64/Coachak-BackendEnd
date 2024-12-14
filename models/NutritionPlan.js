@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const trainingPlanSchema = new mongoose.Schema(
+const nutritionPlanSchema = new mongoose.Schema(
   {
     trainer: { type: mongoose.Schema.ObjectId, ref: "Trainer" },
     title: { type: String },
@@ -7,11 +7,12 @@ const trainingPlanSchema = new mongoose.Schema(
     descritpion: { type: String },
     durationInWeeks: {
       type: Number,
-      required: [true, "please provide duration for the training plan"],
+      required: [true, "please provide duration for the nutrition plan"],
     },
     dayPlan: [{ type: mongoose.Schema.ObjectId, ref: "DayPlan" }],
+    meals: [{ type: mongoose.Schema.ObjectId, ref: "Meal" }],
   },
   { timestamps: true }
 );
-const TrainingPlan = mongoose.model("TrainingPlan", trainingPlanSchema);
-module.exports = TrainingPlan;
+const NutritionPlan = mongoose.model("NutritionPlan", nutritionPlanSchema);
+module.exports = NutritionPlan;

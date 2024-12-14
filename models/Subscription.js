@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const subscriptionSchema = new mongoose.Schema(
   {
+    plan: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Plan",
+    },
+    client: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Client",
+    },
+    trainer: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Trainer",
+    },
     status: {
       type: String,
       default: true,
@@ -13,13 +25,13 @@ const subscriptionSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    TrainingPlan: [
+    trainingPlan: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "TrainingPlan",
       },
     ],
-    NutritionPlan: [
+    nutritionPlan: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "NutritionPlan",
@@ -28,5 +40,6 @@ const subscriptionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
 module.exports = Subscription;
