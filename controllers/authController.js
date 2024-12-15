@@ -64,9 +64,20 @@ exports.register = async (req, res, next) => {
     if (user) {
       createOtp(email);
     }
+    const accessToken = jwt.sign(
+      { id: user.id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
+
     res.status(201).json({
       message: "User registered successfully.",
-      user,
+      data: { user, accessToken, refreshToken },
     });
   } catch (error) {
     console.log(error);
@@ -108,7 +119,7 @@ exports.login = async (req, res, next) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
-   
+
     return res.status(200).json({
       message: "signed in successfull",
       data: { user, accessToken, refreshToken },
