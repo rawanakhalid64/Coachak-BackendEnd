@@ -13,7 +13,7 @@ const ingredientSchema = new mongoose.Schema({
     type: String,
     enums: ["g", "kg"],
   },
-  food: [{ type: mongoose.Schema.ObjectId, ref: "Food" }],
+  food: { type: mongoose.Schema.ObjectId, ref: "Food" },
 });
 const Ingredient = mongoose.model("Ingredient", ingredientSchema);
 module.exports = Ingredient;

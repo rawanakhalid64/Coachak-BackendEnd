@@ -9,18 +9,21 @@ const certificateRoute = require("./routes/certificateRoute");
 const planRoute = require("./routes/planRoute");
 const trainigPlanRoute = require("./routes/trainigPlanRoute");
 const subscriptionRoute = require("./routes/subscriptionRoute");
+const nutritionPlanRoute = require("./routes/nutritionPlanRoute");
+const dayPlanRoute = require("./routes/dayPlanRoute");
 const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
 
-
-app.use(cors({
-  origin: 'http://localhost:3000', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 const connectDb = async () => {
   try {
@@ -45,6 +48,8 @@ app.use("/api/v1/health-conditions", healthConditionRoute);
 app.use("/api/v1/plans", planRoute);
 app.use("/api/v1/subscriptions", subscriptionRoute);
 app.use("/api/v1/training-plans", trainigPlanRoute);
+app.use("/api/v1/nutrition-plans", nutritionPlanRoute);
+app.use("/api/v1/day-plans", dayPlanRoute);
 
 // Global error handler
 app.use((err, req, res, next) => {

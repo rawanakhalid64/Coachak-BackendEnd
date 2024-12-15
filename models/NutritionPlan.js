@@ -10,7 +10,6 @@ const nutritionPlanSchema = new mongoose.Schema(
       required: [true, "please provide duration for the nutrition plan"],
     },
     dayPlan: [{ type: mongoose.Schema.ObjectId, ref: "DayPlan" }],
-    meals: [{ type: mongoose.Schema.ObjectId, ref: "Meal" }],
   },
   { timestamps: true }
 );

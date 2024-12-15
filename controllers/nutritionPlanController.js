@@ -5,14 +5,13 @@ exports.createNutritionPlan = async (req, res, next) => {
   try {
     const { title, goal, descritpion, durationInWeeks, subscriptionId } =
       req.body;
-    const nutritionplan = new NutritionPlan({
+    const nutritionPlan = await NutritionPlan.create({
       trainer: req.user.id,
       title,
       goal,
       descritpion,
       durationInWeeks,
     });
-    await nutritionPlan.save();
     if (subscriptionId) {
       await Subscription.findByIdAndUpdate(subscriptionId, {
         nutritionPlan: nutritionPlan.id,

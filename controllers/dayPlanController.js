@@ -13,7 +13,7 @@ exports.addDayPlan = async (req, res, next) => {
       subscription,
     } = req.body;
     let dayPlan = await DayPlan.findOne({ subscription, day });
-    if (!dayPlan) await DayPlan.create({ subscription, day });
+    if (!dayPlan) dayplan = await DayPlan.create({ subscription, day });
     dayPlan.meal = meal;
     dayPlan.workout = workout;
     await dayPlan.save();
@@ -50,21 +50,15 @@ exports.updateDayPlan = async (req, res, next) => {
 
 exports.addMeal = async (req, res, next) => {
   try {
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
+    const { meal } = res.body;
+    const dayPlan = await DayPlan.findByIdAndUpdate(req.params.id)
+      .status(200)
+      .json({ message: "day plan updated successfull", dayPlan });
   } catch (error) {
     console.log(error);
     res.status(404).json({ message: "cannot update day plan" });
   }
 };
-exports.editMeal = async (req, res, next) => {
-  try {
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
-  }
-};
-
 exports.deleteMeal = async (req, res, next) => {
   try {
     res.status(200).json({ message: "day plan updated successfull", dayPlan });
@@ -73,15 +67,16 @@ exports.deleteMeal = async (req, res, next) => {
     res.status(404).json({ message: "cannot update day plan" });
   }
 };
+// exports.editMeal = async (req, res, next) => {
+//   try {
+//     res.status(200).json({ message: "day plan updated successfull", dayPlan });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ message: "cannot update day plan" });
+//   }
+// };
+
 exports.addWorkout = async (req, res, next) => {
-  try {
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
-  }
-};
-exports.editWorkout = async (req, res, next) => {
   try {
     res.status(200).json({ message: "day plan updated successfull", dayPlan });
   } catch (error) {
@@ -98,3 +93,11 @@ exports.deleteWorkout = async (req, res, next) => {
     res.status(404).json({ message: "cannot update day plan" });
   }
 };
+// exports.editWorkout = async (req, res, next) => {
+//   try {
+//     res.status(200).json({ message: "day plan updated successfull", dayPlan });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ message: "cannot update day plan" });
+//   }
+// };
