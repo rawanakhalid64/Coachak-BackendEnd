@@ -3,7 +3,7 @@ const Subscription = require("../models/Subscription");
 
 exports.createNutritionPlan = async (req, res, next) => {
   try {
-    const { title, goal, descritpion, durationInWeeks, subscribtionId } =
+    const { title, goal, descritpion, durationInWeeks, subscriptionId } =
       req.body;
     const nutritionplan = new NutritionPlan({
       trainer: req.user.id,

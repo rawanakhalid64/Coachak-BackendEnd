@@ -14,7 +14,7 @@ const dayPlanSchema = new mongoose.Schema({
     required: true,
   },
 
-  subscription: [{ type: mongoose.Schema.ObjectId, ref: "Subscription" }],
+  subscription: { type: mongoose.Schema.ObjectId, ref: "Subscription" },
   workout: [{ type: mongoose.Schema.ObjectId, ref: "Workout" }],
   meal: [{ type: mongoose.Schema.ObjectId, ref: "Meal" }],
 });

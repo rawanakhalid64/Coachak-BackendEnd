@@ -11,6 +11,22 @@ exports.addHealthCondition = async (req, res, next) => {
     res.status(404).json({ message: "cannot add healthCondition" });
   }
 };
+
+exports.updateHealthCondition = async (req, res, next) => {
+  try {
+    const healthCondition = await HealthCondition.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body }
+    );
+    res.status(200).json({
+      message: "health condition updated successfull",
+      healthCondition,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "cannot update healthCondition" });
+  }
+};
 exports.getHealthCondition = async (req, res, next) => {
   try {
     const healthConditions = await HealthCondition.find();

@@ -40,8 +40,6 @@ exports.createTrainingPlan = async (req, res, next) => {
 
 exports.updateTrainingPlan = async (req, res, next) => {
   try {
-    const trainerId = req.params.id;
-
     const plan = await TrainingPlan.findOneAndUpdate(
       {
         _id: req.params.id,

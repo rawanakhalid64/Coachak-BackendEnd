@@ -65,7 +65,12 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
-
+// userSchema.pre("save", function (next) {
+//   if (!this.isVerified) {
+//     next(new Error("please verify your acount first"));
+//   }
+//   next();
+// });
 const User = mongoose.model("User", userSchema);
 User.discriminator("trainer", new mongoose.Schema());
 module.exports = User;

@@ -9,10 +9,7 @@ const subscriptionSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Client",
     },
-    trainer: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Trainer",
-    },
+
     status: {
       type: String,
       default: true,

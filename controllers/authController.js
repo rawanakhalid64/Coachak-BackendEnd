@@ -50,7 +50,6 @@ exports.register = async (req, res, next) => {
     if (await User.findOne({ email })) {
       return res.status(400).json({ error: "email is already existed." });
     }
-    console.log("g");
     const user = new User({
       email,
       firstName,
@@ -102,7 +101,7 @@ exports.login = async (req, res, next) => {
     const accessToken = jwt.sign(
       { id: user.id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "1h" }
     );
     const refreshToken = jwt.sign(
       { id: user.id },
