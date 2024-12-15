@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+const cors = require("cors"); // Import CORS package
 const authRouter = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
 const allergyRoute = require("./routes/allergyRoute");
@@ -12,6 +13,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
+
+
+app.use(cors({
+  origin: 'http://localhost:3000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+  credentials: true,
+}));
 
 const connectDb = async () => {
   try {
@@ -51,7 +60,8 @@ app.use((err, req, res, next) => {
 app.get("/", (req, res) => {
   res.send("welcome to coachak");
 });
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3001; // Make sure the backend is running on port 3001
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

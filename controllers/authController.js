@@ -108,14 +108,7 @@ exports.login = async (req, res, next) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
-    // the best Practice is to send the refreshtoken in cookie, to prevent the client from accessing it in js , and automatically send it with credintials
-
-    // res.cookie("jwt", refreshToken, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "None",
-    //   maxAge: 7 * 24 * 60 * 60 * 100,
-    // });
+   
     return res.status(200).json({
       message: "signed in successfull",
       data: { user, accessToken, refreshToken },
