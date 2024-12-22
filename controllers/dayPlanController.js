@@ -2,21 +2,35 @@ const DayPlan = require("../models/DayPlan");
 const NutritionPlan = require("../models/NutritionPlan");
 const TrainingPlan = require("../models/TrainingPlan");
 
-exports.addDayPlan = async (req, res, next) => {
+exports.updateDayPlan = async (req, res, next) => {
   try {
     const {
       trainingPlanId,
       nutritionPlanId,
-      day,
-      meal,
+
+      meals,
       workout,
       subscription,
     } = req.body;
-    let dayPlan = await DayPlan.findOne({ subscription, day });
-    if (!dayPlan) dayplan = await DayPlan.create({ subscription, day });
-    dayPlan.meal = meal;
-    dayPlan.workout = workout;
-    await dayPlan.save();
+    const day = req.params.day;
+    console.log(day);
+
+    let dayPlan = await DayPlan.findOneAndUpdate(
+      { subscription, day },
+      { meals, workout },
+      { new: true }
+    );
+    console.log(dayPlan);
+
+    if (!dayPlan) {
+      console.log("yes");
+      dayPlan = await DayPlan.create({ subscription, day, meals, workout });
+    }
+    // console.log(meals);
+    // dayPlan.meals = meals;
+    // dayPlan.workout = workout;
+    // await dayPlan.save();
+    console.log(dayPlan);
     if (trainingPlanId) {
       await TrainingPlan.findByIdAndUpdate(trainingPlanId, {
         $push: dayPlan.id,
@@ -33,40 +47,44 @@ exports.addDayPlan = async (req, res, next) => {
     res.status(404).json({ message: "cannot add day plan" });
   }
 };
-exports.updateDayPlan = async (req, res, next) => {
-  try {
-    const { meal, workout } = req.body;
-    const dayPlan = await DayPlan.findByIdAndUpdate(req.params.id, {
-      meal,
-      workout,
-    });
+// exports.updateDayPlan = async (req, res, next) => {
+//   try {
+//     const { meals, workout, subscription } = req.body;
+//     const { day } = req.params;
+//     const dayPlan = await DayPlan.findAndUpdate(
+//       { day, subscription },
+//       {
+//         meals,
+//         workout,
+//       }
+//     );
 
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
-  }
-};
+//     res.status(200).json({ message: "day plan updated successfull", dayPlan });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ message: "cannot update day plan" });
+//   }
+// };
 
-exports.addMeal = async (req, res, next) => {
-  try {
-    const { meal } = res.body;
-    const dayPlan = await DayPlan.findByIdAndUpdate(req.params.id)
-      .status(200)
-      .json({ message: "day plan updated successfull", dayPlan });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
-  }
-};
-exports.deleteMeal = async (req, res, next) => {
-  try {
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
-  }
-};
+// exports.addMeal = async (req, res, next) => {
+//   try {
+//     const { meal } = res.body;
+//     const dayPlan = await DayPlan.findByIdAndUpdate(req.params.id)
+//       .status(200)
+//       .json({ message: "day plan updated successfull", dayPlan });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ message: "cannot update day plan" });
+//   }
+// };
+// exports.deleteMeal = async (req, res, next) => {
+//   try {
+//     res.status(200).json({ message: "day plan updated successfull", dayPlan });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ message: "cannot update day plan" });
+//   }
+// };
 // exports.editMeal = async (req, res, next) => {
 //   try {
 //     res.status(200).json({ message: "day plan updated successfull", dayPlan });

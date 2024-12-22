@@ -6,6 +6,6 @@ const route = express.Router();
 route.use(protect);
 route.route("/").get();
 route.route("/").post(restrictTo("trainer", "admin"), createFood);
-route.route("/:id").patch(restrictTo("trainer"), editFood);
+route.route("/:id").patch(restrictTo("trainer", "admin"), editFood);
 
 module.exports = route;

@@ -11,6 +11,11 @@ const trainigPlanRoute = require("./routes/trainigPlanRoute");
 const subscriptionRoute = require("./routes/subscriptionRoute");
 const nutritionPlanRoute = require("./routes/nutritionPlanRoute");
 const dayPlanRoute = require("./routes/dayPlanRoute");
+const foodRoute = require("./routes/foodRoute");
+const ingredientRoute = require("./routes/ingredientRoute");
+const mealRoute = require("./routes/mealRoute");
+const workoutRoute = require("./routes/workoutRoute");
+const exerciseRoute = require("./routes/exerciseRoute");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -50,6 +55,11 @@ app.use("/api/v1/subscriptions", subscriptionRoute);
 app.use("/api/v1/training-plans", trainigPlanRoute);
 app.use("/api/v1/nutrition-plans", nutritionPlanRoute);
 app.use("/api/v1/day-plans", dayPlanRoute);
+app.use("/api/v1/foods", foodRoute);
+app.use("/api/v1/ingredients", ingredientRoute);
+app.use("/api/v1/meals", mealRoute);
+app.use("/api/v1/workouts", workoutRoute);
+app.use("/api/v1/exercises", exerciseRoute);
 
 // Global error handler
 app.use((err, req, res, next) => {
