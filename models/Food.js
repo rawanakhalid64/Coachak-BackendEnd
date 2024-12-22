@@ -6,7 +6,7 @@ const foodSchema = new mongoose.Schema({
     ref: "Trainer",
   },
   name: {
-    type: Number,
+    type: String,
     required: [true, "please provide a name for the meal"],
   },
   calories: {

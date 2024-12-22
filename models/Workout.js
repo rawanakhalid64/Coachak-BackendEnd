@@ -11,8 +11,8 @@ const workoutSchema = new mongoose.Schema(
     },
     exercises: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: "Exercise",
+        exersise: { type: mongoose.Schema.ObjectId, ref: "Exercise" },
+        sortOrder: { type: Number, required: true },
         sets: { type: Number },
         reps: { type: Number },
         rest: { type: Number },

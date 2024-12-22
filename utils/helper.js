@@ -10,13 +10,15 @@ exports.filterObj = (obj, ...filterItems) => {
 exports.restrictTo =
   (...roles) =>
   (req, res, next) => {
-    roles.map((role) => {
-      console.log(role, req.user.role.toLowerCase());
-      if (role.toLowerCase() !== req.user.role.toLowerCase()) {
-        return res
-          .status(404)
-          .json({ message: "you dont have the prevellages for this action" });
-      }
-      next();
-    });
+    const userRole = req.user.role.toLowerCase();
+
+    const hasAccess = roles.some((role) => role.toLowerCase() === userRole);
+
+    if (hasAccess) {
+      return next();
+    }
+
+    return res
+      .status(403)
+      .json({ message: "You don't have the privileges for this action" });
   };

@@ -16,18 +16,17 @@ exports.protect = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
     }
     if (!token)
-      return next(new AppError("you are not logged in to access.", 401));
+      return next(new Error("you are not logged or jwt expired.", 401));
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    // if (!decoded)
+    //   return next(new AppError("you are not logged in to access.", 401));
     const user = await User.findById(decoded.id);
-    console.log(user);
     req.user = user;
     next();
   } catch (error) {
-    console.log(error);
-    res
-      .status(400)
-      .json({ message: "you don't have the permisions to modify changes" });
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 exports.register = async (req, res, next) => {
