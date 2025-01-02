@@ -49,9 +49,13 @@ exports.addCertificate = async (req, res, next) => {
 };
 exports.editCertificate = async (req, res, next) => {
   try {
-    const certificate = await Certificate.findByIdAndUpdate(req.params.id, {
-      ...req.body,
-    });
+    const certificate = await Certificate.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+      },
+      { new: true }
+    );
     res
       .status(200)
       .json({ messsage: "certificate edited successful", certificate });

@@ -14,7 +14,6 @@ exports.updateDayPlan = async (req, res, next) => {
     } = req.body;
     const day = req.params.day;
     console.log(day);
-
     let dayPlan = await DayPlan.findOneAndUpdate(
       { subscription, day },
       { meals, workout },
