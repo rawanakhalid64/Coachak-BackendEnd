@@ -108,6 +108,12 @@ exports.login = async (req, res, next) => {
         .status(404)
         .json({ message: "error in credintials, please try again" });
     }
+    if (!user || !checkedPassword) {
+      return res.status(400).json({
+        message: "Invalid email or password. Please try again.",
+      });
+    }
+    
     const accessToken = jwt.sign(
       { id: user.id },
       process.env.ACCESS_TOKEN_SECRET,
