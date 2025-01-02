@@ -53,6 +53,9 @@ exports.updateProfile = async (req, res, next) => {
 
       allergyId = allergy._id;
     }
+    if (req.body.certificate) {
+      const certificate = await Certificate.create({ ...req.body.certificate });
+    }
 
     const user = await userType.findByIdAndUpdate(
       req.user.id,

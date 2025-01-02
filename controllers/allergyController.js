@@ -11,9 +11,13 @@ exports.addAllergy = async (req, res, next) => {
 };
 exports.updateAllergy = async (req, res, next) => {
   try {
-    const allergy = await Allergy.findByIdAndUpdate(req.params.id, {
-      ...req.body,
-    });
+    const allergy = await Allergy.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+      },
+      { new: true }
+    );
     res.status(200).json({ message: "allergy added successfull", allergy });
   } catch (error) {
     console.log(error);
