@@ -23,53 +23,80 @@ exports.updateProfile = async (req, res, next) => {
 
     const userType = req.user.role === "Trainer" ? Trainer : Client;
 
-    let healthConditionId = null;
+    let healthConditionIds = null;
 
     if (req.body.healthCondition) {
-      let healthCondition = await HealthCondition.findOne({
-        name: req.body.healthCondition,
+      // Ensure healthCondition is an array
+      const healthConditions = Array.isArray(req.body.healthCondition)
+        ? req.body.healthCondition
+        : [req.body.healthCondition];
+
+      // Find existing health conditions in the database
+      let foundConditions = await HealthCondition.find({
+        name: { $in: healthConditions },
       });
 
-      if (!healthCondition) {
-        healthCondition = await HealthCondition.create({
-          name: req.body.healthCondition,
-        });
+      // Create health conditions that were not found
+      let conditionsToCreate = healthConditions.filter(
+        (hc) =>
+          !foundConditions.some(
+            (existingCondition) => existingCondition.name === hc
+          )
+      );
+
+      let createdConditions = [];
+      if (conditionsToCreate.length > 0) {
+        createdConditions = await HealthCondition.create(
+          conditionsToCreate.map((hc) => ({ name: hc }))
+        );
       }
 
-      healthConditionId = healthCondition._id;
-    }
+      // Combine found and newly created conditions
+      foundConditions = foundConditions.concat(createdConditions);
 
+      // Collecting the IDs of all health conditions
+      healthConditionIds = foundConditions.map((condition) => condition._id);
+    }
     let allergyId = null;
     if (req.body.allergy) {
-      let allergy = await Allergy.findOne({
-        name: req.body.allergy,
+      // Find existing allergies in the database
+      let allergies = await Allergy.find({
+        name: { $in: [...req.body.allergy] },
       });
 
-      if (!allergy) {
-        allergy = await Allergy.create({
-          name: req.body.allergy,
-        });
+      // Create any allergies that were not found
+      let allergiesToCreate = req.body.allergy.filter(
+        (a) => !allergies.some((existingAllergy) => existingAllergy.name === a)
+      );
+
+      if (allergiesToCreate.length > 0) {
+        let createdAllergies = await Allergy.create(
+          allergiesToCreate.map((a) => ({ name: a }))
+        );
+        allergies = allergies.concat(createdAllergies); // Combine existing and newly created allergies
       }
 
-      allergyId = allergy._id;
+      // Collecting the IDs of all allergies
+      allergyIds = allergies.map((allergy) => allergy._id);
     }
     if (req.body.certificate) {
       const certificate = await Certificate.create({ ...req.body.certificate });
     }
-
-    const user = await userType.findByIdAndUpdate(
-      req.user.id,
-      {
-        ...updateObj,
-        ...(healthConditionId && {
-          $push: { healthCondition: healthConditionId },
-        }),
-        ...(allergyId && {
-          $push: { allergy: allergyId },
-        }),
-      },
-      { new: true }
-    );
+    console.log(allergyIds);
+    const user = await userType
+      .findByIdAndUpdate(
+        req.user.id,
+        {
+          ...updateObj,
+          healthCondition: healthConditionIds,
+          allergy: allergyIds,
+        },
+        { new: true }
+      )
+      .populate([
+        { path: "healthCondition", select: "name" },
+        { path: "allergy", select: "name" },
+      ]);
 
     res.status(200).json({ message: "profile updated successful", user });
   } catch (error) {

@@ -8,7 +8,9 @@ exports.addHealthCondition = async (req, res, next) => {
       .json({ message: "health condition added successfull", healthCondition });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ message: "cannot add healthCondition" });
+    res
+      .status(404)
+      .json({ message: "cannot add healthCondition", error: error.message });
   }
 };
 
@@ -24,7 +26,9 @@ exports.updateHealthCondition = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ message: "cannot update healthCondition" });
+    res
+      .status(404)
+      .json({ message: "cannot update healthCondition", error: error.message });
   }
 };
 exports.getHealthCondition = async (req, res, next) => {
