@@ -6,7 +6,9 @@ exports.addAllergy = async (req, res, next) => {
     res.status(200).json({ message: "allergy added successfull", allergy });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ message: "cannot add allergy" });
+    res
+      .status(404)
+      .json({ message: "cannot add allergy", error: error.message });
   }
 };
 exports.updateAllergy = async (req, res, next) => {
