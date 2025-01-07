@@ -102,6 +102,7 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    console.log(user);
     const checkedPassword = await bcrypt.compare(password, user.password);
     if (!checkedPassword) {
       return res
@@ -113,7 +114,7 @@ exports.login = async (req, res, next) => {
         message: "Invalid email or password. Please try again.",
       });
     }
-    
+
     const accessToken = jwt.sign(
       { id: user.id },
       process.env.ACCESS_TOKEN_SECRET,
@@ -130,9 +131,10 @@ exports.login = async (req, res, next) => {
       data: { user, accessToken, refreshToken },
     });
   } catch (error) {
-    return res
-      .status(404)
-      .json({ message: "error occured, please try again", error });
+    return res.status(404).json({
+      message: "error occured, please try again",
+      error: error.message,
+    });
   }
 };
 
