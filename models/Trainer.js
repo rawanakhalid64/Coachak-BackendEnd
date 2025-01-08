@@ -26,5 +26,5 @@ trainerSchema.virtual("isAvailable").get(function () {
     this.availableInterval.start <= now && this.availableInterval.end >= now
   );
 });
-const Trainer = User.discriminator("Trainer", trainerSchema);
+const Trainer = User.discriminator("trainer", trainerSchema);
 module.exports = Trainer;

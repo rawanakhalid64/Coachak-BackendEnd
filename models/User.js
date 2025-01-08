@@ -72,5 +72,4 @@ userSchema.pre("save", async function (next) {
 //   next();
 // });
 const User = mongoose.model("User", userSchema);
-User.discriminator("trainer", new mongoose.Schema());
 module.exports = User;
