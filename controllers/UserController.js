@@ -21,7 +21,7 @@ exports.updateProfile = async (req, res, next) => {
       "healthCondition"
     );
     let user;
-    if (req.user.role === "Trainer") {
+    if (req.user.role === "trainer") {
       user = await Trainer.findByIdAndUpdate(
         req.user.id,
         {
@@ -29,7 +29,7 @@ exports.updateProfile = async (req, res, next) => {
         },
         { new: true }
       );
-    } else if (req.user.role === "Client") {
+    } else if (req.user.role === "client") {
       let healthConditionIds;
 
       if (req.body.healthCondition) {
