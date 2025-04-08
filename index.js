@@ -18,6 +18,8 @@ const workoutRoute = require("./routes/workoutRoute");
 const exerciseRoute = require("./routes/exerciseRoute");
 const express = require("express");
 const bodyParser = require("body-parser");
+const upload = require("./middlewares/multer");
+const cloudinary = require("./utils/cloudinary");
 
 const app = express();
 
@@ -61,6 +63,35 @@ app.use("/api/v1/meals", mealRoute);
 app.use("/api/v1/workouts", workoutRoute);
 app.use("/api/v1/exercises", exerciseRoute);
 
+// upload image
+app.use(
+  "/api/v1/upload",
+  upload.single("image"),
+  function functionName(req, res) {
+    if (!req.file) {
+      console.log(req);
+      return res.status(404).json({ message: "No image founded" });
+    }
+    cloudinary.uploader.upload(
+      req.file.path,
+      function functionName(err, result) {
+        if (err) {
+          console.log(err);
+          return res.statusCode(500).json({
+            success: false,
+            message: "Cannot upload Image, check the image name",
+          });
+        }
+        res.status(200).json({
+          success: true,
+          message: "Image uploaded successfully",
+          data: result.url,
+        });
+      }
+    );
+  }
+);
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log the error stack for debugging
@@ -76,7 +107,7 @@ app.get("/", (req, res) => {
   res.send("welcome to coachak");
 });
 
-const PORT = process.env.PORT || 3001; 
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

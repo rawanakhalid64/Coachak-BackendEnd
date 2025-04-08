@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const User = require("./User");
 const trainerSchema = new mongoose.Schema({
   bio: { type: String },
+  // availableInterval: [{ type: "string" }],
+
   availableInterval: {
     start: { type: Date, default: Date.now() },
     end: { type: Date, default: Date.now() },
