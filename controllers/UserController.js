@@ -21,7 +21,7 @@ exports.updateProfile = async (req, res, next) => {
       "healthCondition"
     );
     let user;
-    if (req.user.role === "trainer") {
+    if (req.user.role.toLowerCase() === "trainer") {
       user = await Trainer.findByIdAndUpdate(
         req.user.id,
         {
@@ -29,7 +29,8 @@ exports.updateProfile = async (req, res, next) => {
         },
         { new: true }
       );
-    } else if (req.user.role === "client") {
+      console.log(user);
+    } else if (req.user.role.toLowerCase() === "client") {
       let healthConditionIds;
 
       if (req.body.healthCondition) {
@@ -87,6 +88,7 @@ exports.updateProfile = async (req, res, next) => {
         // Collecting the IDs of all allergies
         allergyIds = allergies.map((allergy) => allergy._id);
       }
+
       user = await Client.findByIdAndUpdate(
         req.user.id,
         {
@@ -104,7 +106,6 @@ exports.updateProfile = async (req, res, next) => {
     // if (req.body.certificate) {
     //   const certificate = await Certificate.create({ ...req.body.certificate });
     // }
-
     res.status(200).json({ message: "profile updated successful", user });
   } catch (error) {
     console.log(error);
