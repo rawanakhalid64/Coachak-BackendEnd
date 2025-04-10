@@ -64,33 +64,27 @@ app.use("/api/v1/workouts", workoutRoute);
 app.use("/api/v1/exercises", exerciseRoute);
 
 // upload image
-app.use(
-  "/api/v1/upload",
-  upload.single("image"),
-  function functionName(req, res) {
-    if (!req.file) {
-      console.log(req);
-      return res.status(404).json({ message: "No image founded" });
-    }
-    cloudinary.uploader.upload(
-      req.file.path,
-      function functionName(err, result) {
-        if (err) {
-          console.log(err);
-          return res.statusCode(500).json({
-            success: false,
-            message: "Cannot upload Image, check the image name",
-          });
-        }
-        res.status(200).json({
-          success: true,
-          message: "Image uploaded successfully",
-          data: result.url,
-        });
-      }
-    );
+app.use("/api/v1/upload", upload.single("file"), function (req, res) {
+  if (!req.file) {
+    console.log(req);
+    return res.status(404).json({ message: "No image founded" });
   }
-);
+  cloudinary.uploader.upload(req.file.path, function functionName(err, result) {
+    if (err) {
+      console.log(err);
+      return res.statusCode(500).json({
+        success: false,
+        message: "Cannot upload Image, check the image name",
+      });
+    }
+    console.log(result);
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+      data: result.url,
+    });
+  });
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
