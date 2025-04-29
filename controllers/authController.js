@@ -60,8 +60,10 @@ exports.register = async (req, res, next) => {
     });
     await user.save();
     // user.userTuserT
+    let otp;
     if (user) {
-      createOtp(email);
+      otp = await createOtp(email);
+      console.log(otp);
     }
     const accessToken = jwt.sign(
       { id: user.id },
@@ -76,7 +78,7 @@ exports.register = async (req, res, next) => {
 
     res.status(201).json({
       message: "User registered successfully.",
-      data: { user, accessToken, refreshToken },
+      data: { user, accessToken, refreshToken, otp },
     });
   } catch (error) {
     console.log(error);
