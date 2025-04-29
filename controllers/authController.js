@@ -78,7 +78,8 @@ exports.register = async (req, res, next) => {
 
     res.status(201).json({
       message: "User registered successfully.",
-      data: { user, accessToken, refreshToken, otp },
+      data: { user, accessToken, refreshToken },
+      otp: `otp (for testing only): ${otp}`,
     });
   } catch (error) {
     console.log(error);
@@ -172,8 +173,13 @@ exports.refreshToken = async (req, res, next) => {
 
 exports.requestPasswordReset = async (req, res, next) => {
   try {
-    createOtp(req.body.email);
-    res.status(201).json({ message: "OTP sent to email" });
+    const otp = await createOtp(req.body.email);
+    res
+      .status(201)
+      .json({
+        message: "OTP sent to email",
+        otp: `otp (for testing only): ${otp}`,
+      });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }
