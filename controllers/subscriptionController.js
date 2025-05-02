@@ -1,11 +1,15 @@
+const Plan = require("../models/Plan");
 const Subscription = require("../models/Subscription");
 
 exports.addSubscription = async (req, res, next) => {
   try {
     const { plan } = req.body;
+    const trainer = (await Plan.findById(plan)).trainer;
+    console.log(trainer);
     const subscription = await Subscription.create({
       client: req.user.id,
       plan,
+      trainer,
     });
     if (!subscription) {
       res.status(404).json({ message: "cannot complete the subsciption" });
@@ -33,5 +37,20 @@ exports.updateSubsciption = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(404).json({ message: "error in updating subscription" });
+  }
+};
+
+exports.getMySubscriptions = async (req, res, next) => {
+  try {
+    console.log(req.user.id);
+    const subscriptions = await Subscription.find({ trainer: req.user.id });
+    console.log(subscriptions);
+    if (!subscriptions) {
+      return res.status(404).json({ message: "No subscriptions found" });
+    }
+    res.status(200).json({ subscriptions });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error fetching subscriptions" });
   }
 };

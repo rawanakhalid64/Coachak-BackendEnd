@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const DayPlan = require("./DayPlan");
 const subscriptionSchema = new mongoose.Schema(
   {
     plan: {
@@ -8,6 +9,10 @@ const subscriptionSchema = new mongoose.Schema(
     client: {
       type: mongoose.Schema.ObjectId,
       ref: "Client",
+    },
+    trainer: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Trainer",
     },
 
     status: {
@@ -44,13 +49,13 @@ subscriptionSchema.pre("save", async function (next) {
 
   // Define the days of the week
   const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
   ];
 
   // Create DayPlan entries for each day

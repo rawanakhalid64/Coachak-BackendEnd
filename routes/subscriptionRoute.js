@@ -3,12 +3,13 @@ const { protect } = require("../controllers/authController");
 const {
   updateSubsciption,
   addSubscription,
+  getMySubscriptions,
 } = require("../controllers/subscriptionController");
 const { restrictTo } = require("../utils/helper");
 const route = express.Router();
 // protect,restrictTo('trainer'),
 route.use(protect);
-route.route("/").get();
+route.route("/").get(getMySubscriptions);
 
 // add role's prevelage for client - for adding - only
 // verify  payment before creating subscription
