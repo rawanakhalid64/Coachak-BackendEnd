@@ -8,11 +8,11 @@ const subscriptionSchema = new mongoose.Schema(
     },
     client: {
       type: mongoose.Schema.ObjectId,
-      ref: "Client",
+      ref: "User",
     },
     trainer: {
       type: mongoose.Schema.ObjectId,
-      ref: "Trainer",
+      ref: "User",
     },
 
     status: {

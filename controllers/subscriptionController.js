@@ -43,12 +43,29 @@ exports.updateSubsciption = async (req, res, next) => {
 exports.getMySubscriptions = async (req, res, next) => {
   try {
     console.log(req.user.id);
-    const subscriptions = await Subscription.find({ trainer: req.user.id });
-    console.log(subscriptions);
+    const subscriptions = await Subscription.find({
+      trainer: req.user.id,
+    })
+      .populate({ path: "plan", select: "title" })
+      .populate({ path: "client", select: "firstName lastName" })
+      .populate({ path: "trainer", select: "firstName lastName" });
+
     if (!subscriptions) {
       return res.status(404).json({ message: "No subscriptions found" });
     }
-    res.status(200).json({ subscriptions });
+
+    const formattedSubscriptions = subscriptions.map((subscription) => {
+      const { plan, client, trainer, ...subscriptionObj } =
+        subscription.toObject();
+      return {
+        ...subscriptionObj,
+        clientName: `${subscription.client.firstName} ${subscription.client.lastName}`,
+        trainerName: `${subscription.trainer.firstName} ${subscription.trainer.lastName}`,
+        planTitle: subscription.plan.title,
+      };
+    });
+
+    res.status(200).json({ subscriptions: formattedSubscriptions });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error fetching subscriptions" });
