@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const DayPlan = require("./DayPlan");
+const WeekPlan = require("./WeekPlan");
 const subscriptionSchema = new mongoose.Schema(
   {
     plan: {
@@ -25,7 +26,7 @@ const subscriptionSchema = new mongoose.Schema(
     },
     expiresAt: {
       type: Date,
-      default: Date.now,
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     },
     trainingPlan: [
       {
@@ -43,32 +44,26 @@ const subscriptionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create a pre-save hook to add DayPlan entries
 subscriptionSchema.pre("save", async function (next) {
-  const subscription = this;
+  if (this.isNew) {
+    const subscription = this.id;
 
-  // Define the days of the week
-  const daysOfWeek = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
-
-  // Create DayPlan entries for each day
-  const dayPlans = daysOfWeek.map((day) => ({
-    day: day,
-    subscription: subscription._id,
-    workouts: [], // Add any default workout if needed
-    meals: [], // Add any default meals if needed
-  }));
-
-  // Save the DayPlan entries to the database
-  await DayPlan.insertMany(dayPlans);
+    // Calculate number of weeks between start and end dates
+    const startDate = new Date(this.startedAt);
+    const endDate = new Date(this.expiresAt);
+    const diffTime = Math.abs(endDate - startDate);
+    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    console.log(diffWeeks);
+    // Create WeekPlans based on subscription duration
+    for (let i = 1; i <= diffWeeks; i++) {
+      await WeekPlan.create({
+        weekNumber: i,
+        subscription,
+      });
+    }
+  }
   next();
 });
+
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
 module.exports = Subscription;

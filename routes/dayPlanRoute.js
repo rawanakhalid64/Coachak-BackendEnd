@@ -14,7 +14,7 @@ const route = express.Router();
 // protect,restrictTo('trainer'),
 route.use(protect);
 route.route("/").get();
-route.route("/:day").patch(restrictTo("trainer"), updateDayPlan);
+route.route("/:dayId").patch(restrictTo("trainer"), updateDayPlan);
 // route.route("/").post(restrictTo("trainer"), addDayPlan);
 // route.use("/:id/meal", restrictTo("trainer"));
 // route.route("/:id/meal").post(addMeal).delete(deleteMeal);

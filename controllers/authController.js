@@ -144,6 +144,7 @@ exports.login = async (req, res, next) => {
 exports.refreshToken = async (req, res, next) => {
   try {
     const refreshToken = req.body.refreshToken;
+    console.log(req.body);
     jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
@@ -174,12 +175,10 @@ exports.refreshToken = async (req, res, next) => {
 exports.requestPasswordReset = async (req, res, next) => {
   try {
     const otp = await createOtp(req.body.email);
-    res
-      .status(201)
-      .json({
-        message: "OTP sent to email",
-        otp: `otp (for testing only): ${otp}`,
-      });
+    res.status(201).json({
+      message: "OTP sent to email",
+      otp: `otp (for testing only): ${otp}`,
+    });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }
