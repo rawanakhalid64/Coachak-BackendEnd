@@ -24,16 +24,20 @@ exports.getDayPlans = async (req, res, next) => {
 exports.updateDayPlan = async (req, res, next) => {
   try {
     const { meals, workout } = req.body;
-    // const day = req.params.day;
+    const day = req.params.dayId;
     // console.log(day);
-    let dayPlan = await DayPlan.findByIdAndUpdate(
-      req.params.dayId,
-      { meals, workout },
-      { new: true }
-    )
-      .populate({ path: "meals" })
-      .populate({ path: "workout" });
-    console.log(dayPlan);
+    let dayPlan = await DayPlan.findById(day);
+    if (!dayPlan) {
+      dayPlan = await DayPlan.create({ subscription, day });
+    }
+    if (meals !== undefined) dayPlan.meals = meals;
+    if (workout !== undefined) dayPlan.workout = workout;
+    await dayPlan.save();
+    dayPlan = await DayPlan.findById(dayPlan._id)
+      .populate({
+        path: "meals.meal", // Populate meals
+      })
+      .populate("workout"); // Populate workout
 
     res.status(200).json({ message: "day plan added successfull", dayPlan });
   } catch (error) {

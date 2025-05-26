@@ -19,10 +19,25 @@ exports.getAllWeeks = async (req, res, next) => {
 };
 exports.getWeek = async (req, res, next) => {
   try {
-    const week = await WeekPlan.find({
+    const weekData = await WeekPlan.find({
       subscription: req.params.subscriptionId,
       weekNumber: req.params.weekNum,
-    }).populate({ path: "days", populate: { path: "meals workout" } });
+    }).populate({ path: "days", populate: { path: "meals.meal workout" } });
+
+    // Transform array of days into key-value pairs
+
+    const transformedWeek = {
+      ...weekData[0].toObject(),
+      days: weekData[0].days.reduce((acc, day) => {
+        acc[day.day] = {
+          _id: day._id,
+          meals: day.meals,
+          workout: day.workout,
+        };
+        return acc;
+      }, {}),
+    };
+    const week = transformedWeek;
     res.status(200).json({
       status: "success",
       data: week,

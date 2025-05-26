@@ -10,11 +10,6 @@ const mealSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide name for the meal"],
   },
-  type: {
-    type: String,
-
-    required: [true, "please provide type of the meal"],
-  },
   description: {
     type: String,
   },
