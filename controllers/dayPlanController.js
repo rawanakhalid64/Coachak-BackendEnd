@@ -21,6 +21,30 @@ exports.getDayPlans = async (req, res, next) => {
     });
   }
 };
+
+exports.addSingleMealForDay = async (req, res, next) => {
+  try {
+    const meal = req.body.meal;
+    const type = req.body.type;
+    const day = await DayPlan.findById(req.params.dayId);
+
+    if (!day) {
+      return res.status(404).json({ message: "Day not found" });
+    }
+
+    // Add the meal to the meals array
+    day.meals.push({ meal, type });
+
+    // Save the updated day
+    await day.save();
+
+    return res.status(200).json({ message: "Meal added successfully", day });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 exports.updateDayPlan = async (req, res, next) => {
   try {
     const { meals, workout } = req.body;

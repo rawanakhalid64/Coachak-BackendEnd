@@ -4,6 +4,7 @@ const { restrictTo } = require("../utils/helper");
 const {
   updateDayPlan,
   addDayPlan,
+  addSingleMealForDay,
   // addMeal,
   // addWorkout,
   // deleteMeal,
@@ -13,7 +14,9 @@ const route = express.Router();
 // add role's prevelage for trainers only
 // protect,restrictTo('trainer'),
 route.use(protect);
+
 route.route("/").get();
+route.route("/:dayId/meals").post(restrictTo("trainer"), addSingleMealForDay);
 route.route("/:dayId").patch(restrictTo("trainer"), updateDayPlan);
 // route.route("/").post(restrictTo("trainer"), addDayPlan);
 // route.use("/:id/meal", restrictTo("trainer"));
