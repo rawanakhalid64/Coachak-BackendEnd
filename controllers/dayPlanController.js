@@ -21,24 +21,38 @@ exports.getDayPlans = async (req, res, next) => {
     });
   }
 };
-
 exports.addSingleMealForDay = async (req, res, next) => {
   try {
-    const meal = req.body.meal;
-    const type = req.body.type;
-    const day = await DayPlan.findById(req.params.dayId);
+    const { meal, type } = req.body;
 
-    if (!day) {
+    // Step 1: Push the new meal entry
+    const updatedDay = await DayPlan.findById(req.params.dayId);
+    updatedDay.meals.push({ meal, type });
+    await updatedDay.save();
+    if (!updatedDay) {
       return res.status(404).json({ message: "Day not found" });
     }
 
-    // Add the meal to the meals array
-    day.meals.push({ meal, type });
+    // Step 2: Get the last meal (just added)
+    const lastMeal = updatedDay.meals[updatedDay.meals.length - 1];
 
-    // Save the updated day
-    await day.save();
+    if (!lastMeal) {
+      return res.status(500).json({ message: "Meal push failed" });
+    }
 
-    return res.status(200).json({ message: "Meal added successfully", day });
+    // Step 3: Populate the last meal
+    const populatedDay = await DayPlan.findById(updatedDay._id).populate(
+      "meals.meal"
+    );
+
+    const populatedLastMeal = populatedDay.meals.find(
+      (m) => m._id.toString() === lastMeal._id.toString()
+    );
+
+    return res.status(200).json({
+      message: "Meal added successfully",
+      meal: populatedLastMeal,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
