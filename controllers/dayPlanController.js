@@ -52,6 +52,7 @@ exports.addSingleMealForDay = async (req, res, next) => {
     return res.status(200).json({
       message: "Meal added successfully",
       meal: populatedLastMeal,
+      day: updatedDay._id,
     });
   } catch (error) {
     console.error(error);
