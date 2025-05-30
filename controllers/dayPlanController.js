@@ -60,6 +60,36 @@ exports.addSingleMealForDay = async (req, res, next) => {
   }
 };
 
+exports.removeSingleMealFromDay = async (req, res, next) => {
+  try {
+    const dayMeals = await DayPlan.findById(req.params.dayId);
+    if (!dayMeals) {
+      return res.status(404).json({ message: "Day plan not found" });
+    }
+
+    const mealExists = dayMeals.meals.some(
+      (meal) => meal._id.toString() === req.params.mealId
+    );
+
+    if (!mealExists) {
+      return res.status(200).json({ message: "Meal is not in the plan" });
+    }
+
+    dayMeals.meals = dayMeals.meals.filter(
+      (meal) => meal._id.toString() !== req.params.mealId
+    );
+
+    await dayMeals.save();
+
+    res
+      .status(200)
+      .json({ message: "Meal removed successfully from day plan" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to remove meal from day plan" });
+  }
+};
+
 exports.updateDayPlan = async (req, res, next) => {
   try {
     const { meals, workout } = req.body;
