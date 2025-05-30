@@ -92,9 +92,13 @@ exports.verifyEmail = async (req, res, next) => {
     const { email, otp } = req.body;
     // check if email exists
     const existingUser = await verifyOtp(email, otp, res);
-    res
-      .status(200)
-      .json({ message: "email verified successfully", user: existingUser });
+    const role = (await User.findOne({ email })).role;
+    console.log(role);
+    res.status(200).json({
+      message: "email verified successfully",
+      user: existingUser,
+      role,
+    });
   } catch (error) {
     console.log(error.message);
     return res.status(400).json({ success: false, error: error.message });

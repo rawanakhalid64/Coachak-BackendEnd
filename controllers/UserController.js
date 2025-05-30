@@ -13,6 +13,13 @@ exports.uploadImage = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
+    const checkUser = await User.findById(req.user.id);
+    if (!checkUser) {
+      return res.json({
+        message: "no user found",
+        error: error.message,
+      });
+    }
     const updateObj = filterObj(
       req.body,
       "avgRating",
