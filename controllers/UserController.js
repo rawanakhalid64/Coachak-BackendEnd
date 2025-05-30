@@ -28,15 +28,17 @@ exports.updateProfile = async (req, res, next) => {
       "healthCondition"
     );
     let user;
+    console.log("id", req.user.id);
+
     if (req.user.role.toLowerCase() === "trainer") {
-      user = await Trainer.findByIdAndUpdate(
+      console.log("this");
+      user = await User.findByIdAndUpdate(
         req.user.id,
         {
           ...updateObj,
         },
         { new: true }
       );
-      console.log(user);
     } else if (req.user.role.toLowerCase() === "client") {
       let healthConditionIds;
 
@@ -96,7 +98,7 @@ exports.updateProfile = async (req, res, next) => {
         allergyIds = allergies.map((allergy) => allergy._id);
       }
 
-      user = await Client.findByIdAndUpdate(
+      user = await User.findByIdAndUpdate(
         req.user.id,
         {
           ...updateObj,

@@ -9,6 +9,7 @@ const Trainer = require("../models/Trainer");
 
 exports.protect = async (req, res, next) => {
   try {
+    // console.log(req.headers);
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
