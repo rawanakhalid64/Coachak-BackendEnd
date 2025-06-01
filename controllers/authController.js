@@ -56,7 +56,7 @@ exports.register = async (req, res, next) => {
       lastName,
       phoneNumber,
       dateOfBirth,
-      role,
+      role: role.toLowerCase(),
       password,
     });
     await user.save();
