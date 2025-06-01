@@ -60,6 +60,54 @@ exports.addSingleMealForDay = async (req, res, next) => {
   }
 };
 
+exports.updateSingleMealInDay = async (req, res, next) => {
+  try {
+    const { meal, type } = req.body;
+    const { dayId, mealId } = req.params;
+
+    const dayPlan = await DayPlan.findById(dayId);
+    if (!dayPlan) {
+      return res.status(404).json({ message: "Day plan not found" });
+    }
+
+    // const mealIndex = dayPlan.meals.findIndex(
+    //   (m) => m._id.toString() === mealId
+    // );
+
+    // if (mealIndex === -1) {
+    //   return res.status(404).json({ message: "Meal not found in day plan" });
+    // }
+
+    const currentMeal = dayPlan.meals.filter((meal) => {
+      // console.log(meal);
+      return meal._id.toString() !== mealId;
+    });
+    console.log(currentMeal);
+    // Update meal fields
+    // if (meal) dayPlan.meals[mealIndex].meal = meal;
+    // if (type) dayPlan.meals[mealIndex].type = type;
+
+    await dayPlan.save();
+
+    // Repopulate meals to return updated version
+    const populatedDay = await DayPlan.findById(dayId).populate("meals.meal");
+    const updatedMeal = populatedDay.meals.filter(
+      (m) => m._id.toString() === mealId
+    );
+
+    return res.status(200).json({
+      message: "Meal updated successfully",
+      meal: updatedMeal,
+      day: populatedDay._id,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Failed to update meal in day plan" });
+  }
+};
+
 exports.removeSingleMealFromDay = async (req, res, next) => {
   try {
     const dayMeals = await DayPlan.findById(req.params.dayId);

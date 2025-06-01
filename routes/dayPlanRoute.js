@@ -6,6 +6,7 @@ const {
   addDayPlan,
   addSingleMealForDay,
   removeSingleMealFromDay,
+  updateSingleMealInDay,
   // addMeal,
   // addWorkout,
   // deleteMeal,
@@ -20,7 +21,8 @@ route.route("/").get();
 route.route("/:dayId/meals").post(restrictTo("trainer"), addSingleMealForDay);
 route
   .route("/:dayId/meals/:mealId")
-  .delete(restrictTo("trainer"), removeSingleMealFromDay);
+  .delete(restrictTo("trainer"), removeSingleMealFromDay)
+  .patch(restrictTo("trainer"), updateSingleMealInDay);
 
 route.route("/:dayId").patch(restrictTo("trainer"), updateDayPlan);
 // route.route("/").post(restrictTo("trainer"), addDayPlan);

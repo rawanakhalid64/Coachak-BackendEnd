@@ -226,9 +226,9 @@ exports.resetPassword = async (req, res, next) => {
 exports.sendOtp = async (req, res, next) => {
   try {
     const { email } = req.body;
-    await createOtp(email);
+    const otp = await createOtp(email);
 
-    res.status(201).json({ message: "otp sent successfull" });
+    res.status(201).json({ message: "otp sent successfull", otp });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }
