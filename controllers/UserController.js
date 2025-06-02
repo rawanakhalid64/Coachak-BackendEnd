@@ -13,13 +13,11 @@ exports.uploadImage = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const checkUser = await User.findById(req.user.id);
-    if (!checkUser) {
-      return res.json({
-        message: "no user found",
-        error: error.message,
-      });
+    const userDoc = await User.findById(req.user.id);
+    if (!userDoc) {
+      return res.status(404).json({ message: "User not found" });
     }
+
     const updateObj = filterObj(
       req.body,
       "avgRating",
@@ -27,100 +25,75 @@ exports.updateProfile = async (req, res, next) => {
       "allergy",
       "healthCondition"
     );
-    let user;
-    console.log("id", req.user.id);
 
-    if (req.user.role.toLowerCase() === "trainer") {
-      console.log("this");
-      user = await User.findByIdAndUpdate(
-        req.user.id,
-        {
-          ...updateObj,
-        },
-        { new: true }
-      );
-    } else if (req.user.role.toLowerCase() === "client") {
+    // Update fields common to all users
+    Object.assign(userDoc, updateObj);
+
+    if (userDoc.role.toLowerCase() === "client") {
       let healthConditionIds;
-
       if (req.body.healthCondition) {
-        // Ensure healthCondition is an array
         const healthConditions = Array.isArray(req.body.healthCondition)
           ? req.body.healthCondition
           : [req.body.healthCondition];
 
-        // Find existing health conditions in the database
         let foundConditions = await HealthCondition.find({
           name: { $in: healthConditions },
         });
 
-        // Create health conditions that were not found
-        let conditionsToCreate = healthConditions.filter(
-          (hc) =>
-            !foundConditions.some(
-              (existingCondition) => existingCondition.name === hc
-            )
+        const conditionsToCreate = healthConditions.filter(
+          (hc) => !foundConditions.some((c) => c.name === hc)
         );
 
-        let createdConditions = [];
-        if (conditionsToCreate.length > 0) {
-          createdConditions = await HealthCondition.create(
-            conditionsToCreate.map((hc) => ({ name: hc }))
-          );
-        }
+        const createdConditions = await HealthCondition.create(
+          conditionsToCreate.map((hc) => ({ name: hc }))
+        );
 
-        // Combine found and newly created conditions
         foundConditions = foundConditions.concat(createdConditions);
-
-        // Collecting the IDs of all health conditions
-        healthConditionIds = foundConditions.map((condition) => condition._id);
+        healthConditionIds = foundConditions.map((c) => c._id);
+        userDoc.healthCondition = healthConditionIds;
       }
+
       let allergyIds;
       if (req.body.allergy) {
-        // Find existing allergies in the database
-        let allergies = await Allergy.find({
-          name: { $in: [...req.body.allergy] },
+        const allergies = await Allergy.find({
+          name: { $in: req.body.allergy },
         });
 
-        // Create any allergies that were not found
-        let allergiesToCreate = req.body.allergy.filter(
-          (a) =>
-            !allergies.some((existingAllergy) => existingAllergy.name === a)
+        const allergiesToCreate = req.body.allergy.filter(
+          (a) => !allergies.some((al) => al.name === a)
         );
 
-        if (allergiesToCreate.length > 0) {
-          let createdAllergies = await Allergy.create(
-            allergiesToCreate.map((a) => ({ name: a }))
-          );
-          allergies = allergies.concat(createdAllergies); // Combine existing and newly created allergies
-        }
+        const createdAllergies = await Allergy.create(
+          allergiesToCreate.map((a) => ({ name: a }))
+        );
 
-        // Collecting the IDs of all allergies
-        allergyIds = allergies.map((allergy) => allergy._id);
+        const allAllergies = allergies.concat(createdAllergies);
+        allergyIds = allAllergies.map((a) => a._id);
+        userDoc.allergy = allergyIds;
       }
+    }
 
-      user = await User.findByIdAndUpdate(
-        req.user.id,
-        {
-          ...updateObj,
-          healthCondition: healthConditionIds,
-          allergy: allergyIds,
-        },
-        { new: true }
-      ).populate([
+    await userDoc.save();
+
+    // Re-fetch user with populated refs if client
+    let populatedUser = userDoc;
+    if (userDoc.role.toLowerCase() === "client") {
+      populatedUser = await User.findById(req.user.id).populate([
         { path: "healthCondition", select: "name" },
         { path: "allergy", select: "name" },
       ]);
     }
 
-    // if (req.body.certificate) {
-    //   const certificate = await Certificate.create({ ...req.body.certificate });
-    // }
-    res.status(200).json({ message: "profile updated successful", user });
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: populatedUser,
+    });
   } catch (error) {
     console.log(error);
-    res
-      .status(404)
-      .json({ message: "error in updating profile", error: error.message });
+    res.status(500).json({
+      message: "Error updating profile",
+      error: error.message,
+    });
   }
 };
 

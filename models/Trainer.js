@@ -30,11 +30,5 @@ const trainerSchema = new mongoose.Schema({
   },
 });
 
-// trainerSchema.virtual("isAvailable").get(function () {
-//   const now = new Date();
-//   return (
-//     this.availableInterval.start <= now && this.availableInterval.end >= now
-//   );
-// });
 const Trainer = User.discriminator("trainer", trainerSchema);
 module.exports = Trainer;
