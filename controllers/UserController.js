@@ -25,6 +25,7 @@ exports.updateProfile = async (req, res, next) => {
       "allergy",
       "healthCondition"
     );
+    console.log(updateObj);
 
     // Update fields common to all users
     Object.assign(userDoc, updateObj);

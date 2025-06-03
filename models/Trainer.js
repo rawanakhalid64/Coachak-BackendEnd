@@ -8,7 +8,6 @@ const trainerSchema = new mongoose.Schema({
     type: [String],
     default: ["Sun", "Mon", "Tue", "Wed", "Thu"],
     enum: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    required: true,
     validate: {
       validator: function (value) {
         return value.length === new Set(value).size; // Check for duplicates

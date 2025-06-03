@@ -17,13 +17,13 @@ const route = express.Router();
 // protect,restrictTo('trainer'),
 route.use(protect);
 
-route.route("/").get();
 route.route("/:dayId/meals").post(restrictTo("trainer"), addSingleMealForDay);
 route
   .route("/:dayId/meals/:mealId")
   .delete(restrictTo("trainer"), removeSingleMealFromDay)
   .patch(restrictTo("trainer"), updateSingleMealInDay);
 
+route.route("/").get();
 route.route("/:dayId").patch(restrictTo("trainer"), updateDayPlan);
 // route.route("/").post(restrictTo("trainer"), addDayPlan);
 // route.use("/:id/meal", restrictTo("trainer"));

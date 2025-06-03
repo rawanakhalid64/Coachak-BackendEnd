@@ -154,8 +154,12 @@ exports.updateDayPlan = async (req, res, next) => {
       .populate({
         path: "meals.meal", // Populate meals
       })
-      .populate("workout"); // Populate workout
-
+      .populate({
+        path: "workout",
+        populate: {
+          path: "exercises.exercise", // Populate each exercise inside workout
+        },
+      });
     res.status(200).json({ message: "day plan added successfull", dayPlan });
   } catch (error) {
     console.log(error);
