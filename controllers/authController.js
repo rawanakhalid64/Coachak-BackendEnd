@@ -41,6 +41,7 @@ exports.register = async (req, res, next) => {
       password,
       role,
       confirmPassword,
+      gender,
     } = req.body;
     if (password !== confirmPassword) {
       return res
@@ -56,6 +57,7 @@ exports.register = async (req, res, next) => {
       lastName,
       phoneNumber,
       dateOfBirth,
+      gender,
       role: role.toLowerCase(),
       password,
     });
