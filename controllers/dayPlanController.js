@@ -1,6 +1,7 @@
 const DayPlan = require("../models/DayPlan");
 const NutritionPlan = require("../models/NutritionPlan");
 const TrainingPlan = require("../models/TrainingPlan");
+const Workout = require("../models/Workout");
 
 exports.getDayPlans = async (req, res, next) => {
   try {
@@ -256,13 +257,35 @@ exports.updateDayPlan = async (req, res, next) => {
 //     res.status(404).json({ message: "cannot update day plan" });
 //   }
 // };
-
-exports.addWorkout = async (req, res, next) => {
+exports.addWorkoutToDay = async (req, res, next) => {
   try {
-    res.status(200).json({ message: "day plan updated successfull", dayPlan });
+    const { name } = req.body;
+    const { dayId } = req.params;
+
+    // Find the day plan
+    const dayPlan = await DayPlan.findById(dayId);
+    if (!dayPlan) {
+      return res.status(404).json({ message: "DayPlan not found." });
+    }
+
+    // Create and save the workout
+    const workout = new Workout({ name, creator: req.user.id });
+    await workout.save();
+
+    // Assign the workout and save the day plan
+    dayPlan.workout = workout._id;
+    await dayPlan.save();
+
+    // Re-fetch and populate the workout field
+    const updatedDayPlan = await DayPlan.findById(dayId).populate("workout");
+
+    res.status(200).json({
+      message: "Workout added successfully.",
+      dayPlan: updatedDayPlan,
+    });
   } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot update day plan" });
+    console.error("Error adding workout to day:", error);
+    res.status(500).json({ message: "Cannot update DayPlan." });
   }
 };
 
