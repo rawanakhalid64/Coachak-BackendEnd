@@ -11,7 +11,7 @@ const certificateSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      required: [true, "please add image for certificate"],
+      // required: [true, "please add image for certificate"],
     },
     url: {
       type: String,
