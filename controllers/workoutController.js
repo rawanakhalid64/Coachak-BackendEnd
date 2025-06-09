@@ -98,3 +98,43 @@ exports.removeExerciseFromWorkout = async (req, res, next) => {
     res.status(500).json({ message: "Failed to remove exercise from workout" });
   }
 };
+
+exports.editExerciseInWorkout = async (req, res) => {
+  try {
+    console.log(req.params);
+    const { workoutId, exerciseId } = req.params;
+    const { sets, reps, rest, sortOrder, exercise } = req.body;
+
+    const workout = await Workout.findById(workoutId);
+    if (!workout) {
+      return res.status(404).json({ message: "Workout not found" });
+    }
+    console.log(workout);
+    const exerciseToEdit = workout.exercises.id(exerciseId);
+    if (!exerciseToEdit) {
+      return res.status(404).json({ message: "Exercise not found in workout" });
+    }
+
+    // Update only the provided fields
+    if (typeof sets !== "undefined") exerciseToEdit.sets = sets;
+    if (typeof reps !== "undefined") exerciseToEdit.reps = reps;
+    if (typeof rest !== "undefined") exerciseToEdit.rest = rest;
+    if (typeof sortOrder !== "undefined") exerciseToEdit.sortOrder = sortOrder;
+    if (typeof exercise !== "undefined") exerciseToEdit.exercise = exercise;
+
+    await workout.save();
+
+    // Optional: populate the exercise field if needed
+    await workout.populate("exercises.exercise", "name");
+
+    res.status(200).json({
+      message: "Exercise updated successfully",
+      workout,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to update exercise in workout",
+    });
+  }
+};
