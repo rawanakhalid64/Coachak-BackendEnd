@@ -3,6 +3,7 @@ require("dotenv").config();
 const cors = require("cors"); // Import CORS package
 const authRouter = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
+const trainerRoute = require("./routes/trainerRoute");
 const allergyRoute = require("./routes/allergyRoute");
 const healthConditionRoute = require("./routes/healthConditionRoute");
 const certificateRoute = require("./routes/certificateRoute");
@@ -49,6 +50,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/trainers", trainerRoute);
 app.use("/api/v1/certificates", certificateRoute);
 app.use("/api/v1/allergies", allergyRoute);
 app.use("/api/v1/health-conditions", healthConditionRoute);

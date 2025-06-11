@@ -42,3 +42,27 @@ exports.updatePlan = async (req, res, next) => {
     res.status(404).json({ message: "error in creating plan" });
   }
 };
+
+exports.getTrainersPlans = async (req, res, next) => {
+  try {
+    const plan = await Plan.find({
+      trainer: req.params.trainerId,
+    });
+    res.status(200).json({ message: "plans retrieved successful", plan });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "error in getting plans" });
+  }
+};
+exports.getMyPlans = async (req, res, next) => {
+  console.log(req.user.id);
+  try {
+    const plan = await Plan.find({
+      trainer: req.user.id,
+    });
+    res.status(200).json({ message: "plans retrieved successful", plan });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "error in getting plans" });
+  }
+};
