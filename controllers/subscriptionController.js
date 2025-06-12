@@ -39,7 +39,6 @@ exports.updateSubsciption = async (req, res, next) => {
     res.status(404).json({ message: "error in updating subscription" });
   }
 };
-
 exports.getMySubscriptions = async (req, res, next) => {
   try {
     console.log(req.user.id);
@@ -47,21 +46,33 @@ exports.getMySubscriptions = async (req, res, next) => {
       trainer: req.user.id,
     })
       .populate({ path: "plan", select: "title" })
-      .populate({ path: "client", select: "firstName lastName" })
+      .populate({ path: "client", select: "firstName lastName profilePhoto" })
       .populate({ path: "trainer", select: "firstName lastName" });
 
     if (!subscriptions) {
       return res.status(404).json({ message: "No subscriptions found" });
     }
 
+    // Combine firstName and lastName into fullName
     const formattedSubscriptions = subscriptions.map((subscription) => {
       const { plan, client, trainer, ...subscriptionObj } =
         subscription.toObject();
+
       return {
         ...subscriptionObj,
-        clientName: `${subscription.client.firstName} ${subscription.client.lastName}`,
-        trainerName: `${subscription.trainer.firstName} ${subscription.trainer.lastName}`,
-        planTitle: subscription.plan.title,
+        client: {
+          fullName: `${client.firstName} ${client.lastName}`,
+          profilePhoto: client.profilePhoto,
+          _id: client._id,
+        },
+        trainer: {
+          fullName: `${trainer.firstName} ${trainer.lastName}`,
+          _id: trainer._id,
+        },
+        plan: {
+          title: plan.title,
+          _id: plan._id,
+        },
       };
     });
 

@@ -1,4 +1,6 @@
+const Exercise = require("../models/Exercise");
 const Workout = require("../models/Workout");
+const mongoose = require("mongoose");
 
 exports.createWorkout = async (req, res, next) => {
   try {
@@ -39,33 +41,52 @@ exports.editWorkout = async (req, res, next) => {
 exports.addExercisesToWorkoutData = async (req, res, next) => {
   try {
     const { exercise, sortOrder, sets, reps, rest } = req.body;
-    console.log(req.params.workoutId);
+
+    // Find the workout first
     let workout = await Workout.findById(req.params.workoutId);
     if (!workout) {
       return res.status(404).json({ message: "Workout not found" });
     }
+
+    let exerciseId;
+
+    // Check if exercise is an ObjectId (existing exercise)
+    if (mongoose.Types.ObjectId.isValid(exercise)) {
+      exerciseId = exercise;
+    } else if (typeof exercise === "string" && exercise.trim() !== "") {
+      // Otherwise, treat exercise as a new exercise name; create it
+      const newExercise = new Exercise({
+        name: exercise.trim(),
+        creator: req.user.id,
+      });
+      await newExercise.save();
+      exerciseId = newExercise._id;
+    } else {
+      return res.status(400).json({ message: "Invalid exercise data" });
+    }
+
     workout.exercises.push({
-      exercise,
+      exercise: exerciseId,
       sets,
       reps,
       rest,
-      sortOrder: sortOrder || workout.exercises.length,
+      sortOrder: sortOrder ?? workout.exercises.length,
     });
+
     await workout.save();
 
-    // Re-fetch workout with populated exercise data
+    // Populate the exercises.exercise to get details (like name)
     workout = await Workout.findById(workout._id).populate(
       "exercises.exercise",
       "name"
     );
 
-    res.status(200).json({ message: "Workout edited successfull", workout });
+    res.status(200).json({ message: "Workout updated successfully", workout });
   } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "cannot add workout to day" });
+    console.error(error);
+    res.status(500).json({ message: "Cannot add exercise to workout" });
   }
 };
-
 exports.removeExerciseFromWorkout = async (req, res, next) => {
   try {
     const { workoutId, exerciseId } = req.params;

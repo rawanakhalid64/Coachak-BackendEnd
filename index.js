@@ -12,6 +12,7 @@ const trainigPlanRoute = require("./routes/trainigPlanRoute");
 const subscriptionRoute = require("./routes/subscriptionRoute");
 const nutritionPlanRoute = require("./routes/nutritionPlanRoute");
 const dayPlanRoute = require("./routes/dayPlanRoute");
+const weekPlanRoute = require("./routes/weekPlanRoute");
 const foodRoute = require("./routes/foodRoute");
 const ingredientRoute = require("./routes/ingredientRoute");
 const mealRoute = require("./routes/mealRoute");
@@ -59,11 +60,13 @@ app.use("/api/v1/subscriptions", subscriptionRoute);
 app.use("/api/v1/training-plans", trainigPlanRoute);
 app.use("/api/v1/nutrition-plans", nutritionPlanRoute);
 app.use("/api/v1/day-plans", dayPlanRoute);
+// app.use("/api/v1/day-names", dayNameRoute);
 app.use("/api/v1/foods", foodRoute);
 app.use("/api/v1/ingredients", ingredientRoute);
 app.use("/api/v1/meals", mealRoute);
 app.use("/api/v1/workouts", workoutRoute);
 app.use("/api/v1/exercises", exerciseRoute);
+app.use("/api/v1/weeks", weekPlanRoute);
 
 // upload image
 app.use("/api/v1/upload", upload.single("file"), function (req, res) {

@@ -41,8 +41,21 @@ const subscriptionSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// Virtual for active status
+subscriptionSchema.virtual("active").get(function () {
+  return new Date() < this.expiresAt;
+});
+
+// Virtual for daysUntilExpire
+subscriptionSchema.virtual("daysUntilExpire").get(function () {
+  const now = new Date();
+  const diffTime = this.expiresAt - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0; // return 0 if already expired
+});
 
 subscriptionSchema.pre("save", async function (next) {
   if (this.isNew) {
