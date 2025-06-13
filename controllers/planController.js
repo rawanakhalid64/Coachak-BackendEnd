@@ -66,3 +66,17 @@ exports.getMyPlans = async (req, res, next) => {
     res.status(404).json({ message: "error in getting plans" });
   }
 };
+exports.getPlanById = async (req, res, next) => {
+  try {
+    const plan = await Plan.findById(req.params.id);
+
+    if (!plan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    res.status(200).json({ message: "Plan retrieved successfully", plan });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "Error in getting plan" });
+  }
+};

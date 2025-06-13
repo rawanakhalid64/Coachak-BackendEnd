@@ -6,6 +6,7 @@ const {
   updatePlan,
   getTrainersPlans,
   getMyPlans,
+  getPlanById,
 } = require("../controllers/planController");
 const route = express.Router();
 // add role's prevelage for trainers only
@@ -16,6 +17,9 @@ route.use(protect);
 route.route("/").get(getMyPlans);
 
 route.route("/").post(protect, restrictTo("trainer"), createPlan);
-route.route("/:id").patch(protect, restrictTo("trainer", updatePlan));
+route
+  .route("/:id")
+  .get(protect, getPlanById)
+  .patch(protect, restrictTo("trainer", updatePlan));
 
 module.exports = route;
