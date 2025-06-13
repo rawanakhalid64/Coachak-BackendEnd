@@ -34,7 +34,8 @@ exports.updatePlan = async (req, res, next) => {
         _id: req.params.id,
         trainer: req.user.id,
       },
-      { ...req.body }
+      { ...req.body },
+      { new: true }
     );
     res.status(200).json({ message: "plan updated successful", plan });
   } catch (error) {

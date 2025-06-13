@@ -20,6 +20,6 @@ route.route("/").post(protect, restrictTo("trainer"), createPlan);
 route
   .route("/:id")
   .get(protect, getPlanById)
-  .patch(protect, restrictTo("trainer", updatePlan));
+  .patch(protect, restrictTo("trainer"), updatePlan);
 
 module.exports = route;
