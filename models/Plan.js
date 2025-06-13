@@ -31,12 +31,21 @@ const planSchema = new mongoose.Schema(
       type: Boolean,
       required: [true, "does the plan has nutrition plan?"],
     },
-    subscriptionCount: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
+
+planSchema.virtual("subscriptionCount", {
+  ref: "Subscription",
+  localField: "_id",
+  foreignField: "plan",
+  count: true,
+});
+
+planSchema.pre(/^find/, function autoPopulateSubscriptionCount(next) {
+  this.populate("subscriptionCount");
+  next();
+});
+
 const Plan = mongoose.model("Plan", planSchema);
 module.exports = Plan;
