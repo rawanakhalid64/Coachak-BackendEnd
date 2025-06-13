@@ -8,7 +8,7 @@ const Workout = require("../models/Workout");
 exports.getDayPlan = async (req, res, next) => {
   try {
     const { weekNum, dayName } = req.params;
-    console.log(weekNum);
+    console.log(req.body);
     const subscriptionId = (
       await Subscription.findOne({
         client: req.body.client,
