@@ -32,7 +32,7 @@ const planSchema = new mongoose.Schema(
       required: [true, "does the plan has nutrition plan?"],
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 planSchema.virtual("subscriptionCount", {
