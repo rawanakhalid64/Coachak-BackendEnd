@@ -78,5 +78,12 @@ subscriptionSchema.pre("save", async function (next) {
   next();
 });
 
+subscriptionSchema.post("save", async function (doc, next) {
+  if (this.isNew && this.plan) {
+    await Plan.findByIdAndUpdate(this.plan, { $inc: { subscriptionCount: 1 } });
+  }
+  next();
+});
+
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
 module.exports = Subscription;

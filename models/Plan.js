@@ -31,6 +31,10 @@ const planSchema = new mongoose.Schema(
       type: Boolean,
       required: [true, "does the plan has nutrition plan?"],
     },
+    subscriptionCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
