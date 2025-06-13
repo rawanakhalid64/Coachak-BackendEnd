@@ -10,7 +10,6 @@ exports.uploadImage = async (req, res, next) => {
   try {
   } catch (error) {}
 };
-
 exports.updateProfile = async (req, res, next) => {
   try {
     const userDoc = await User.findById(req.user.id);
@@ -22,14 +21,18 @@ exports.updateProfile = async (req, res, next) => {
       req.body,
       "avgRating",
       "role",
+      "email",
+      "password",
       "allergy",
-      "healthCondition"
+      "healthCondition",
+      "yearsOfExperience"
     );
-    console.log(updateObj);
 
     // Update fields common to all users
     Object.assign(userDoc, updateObj);
+    console.log(userDoc.role);
 
+    // Handle Client-specific updates
     if (userDoc.role.toLowerCase() === "client") {
       let healthConditionIds;
       if (req.body.healthCondition) {
@@ -74,7 +77,33 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
+    // Handle Trainer-specific updates
+    if (userDoc.role.toLowerCase() === "trainer") {
+      if (req.body.availableDays) {
+        console.log("object");
+        // validate availableDays format if needed
+        userDoc.availableDays = req.body.availableDays;
+      }
+
+      if (req.body.bio) {
+        userDoc.bio = req.body.bio;
+      }
+
+      if (req.body.yearsOfExperience) {
+        userDoc.yearsOfExperience = req.body.yearsOfExperience;
+      }
+
+      if (req.body.pricePerSession) {
+        userDoc.pricePerSession = req.body.pricePerSession;
+      }
+
+      if (req.body.avgRating) {
+        userDoc.avgRating = req.body.avgRating;
+      }
+    }
+
     await userDoc.save();
+    console.log(userDoc);
 
     // Re-fetch user with populated refs if client
     let populatedUser = userDoc;
