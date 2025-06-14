@@ -144,3 +144,14 @@ exports.getProfile = async (req, res, next) => {
     res.status(404).json({ message: "error in getting profile" });
   }
 };
+
+exports.getAllTrainers = async (req, res, next) => {
+  try {
+    const trainers = await Trainer.find().select("-password -isVerified -role");
+    res
+      .status(200)
+      .json({ message: "trainers retrieved successful", trainers });
+  } catch (error) {
+    res.status(404).json({ message: "error in getting trainers" });
+  }
+};
