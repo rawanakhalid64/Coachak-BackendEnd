@@ -112,7 +112,8 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
+    console.log(email);
+
     const checkedPassword = await bcrypt.compare(password, user.password);
     if (!checkedPassword) {
       return res
