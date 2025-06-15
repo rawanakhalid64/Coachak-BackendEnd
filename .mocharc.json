@@ -1,0 +1,10 @@
+{
+  "spec": "test/unit/**/*.test.js",
+  "timeout": 10000,
+  "exit": true,
+  "color": true,
+  "reporter": "spec",
+  "require": ["@babel/register"],
+  "recursive": true,
+  "file": []
+}

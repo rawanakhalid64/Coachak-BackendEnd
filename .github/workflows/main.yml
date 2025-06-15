@@ -1,0 +1,34 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: rawana11/coachak-backend  # Replace with your Docker Hub repository name
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .  # Root directory as the context
+          file: ./Dockerfile.backend  # Path to Dockerfile in the root directory
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
