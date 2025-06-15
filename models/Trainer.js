@@ -8,7 +8,6 @@ const trainerSchema = new mongoose.Schema({
     type: [String],
     default: ["Sun", "Mon", "Tue", "Wed", "Thu"],
     enum: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    required: true,
     validate: {
       validator: function (value) {
         return value.length === new Set(value).size; // Check for duplicates
@@ -30,11 +29,5 @@ const trainerSchema = new mongoose.Schema({
   },
 });
 
-// trainerSchema.virtual("isAvailable").get(function () {
-//   const now = new Date();
-//   return (
-//     this.availableInterval.start <= now && this.availableInterval.end >= now
-//   );
-// });
 const Trainer = User.discriminator("trainer", trainerSchema);
 module.exports = Trainer;

@@ -6,11 +6,21 @@ const {
   getWeek,
   getCurrentWeek,
 } = require("../controllers/weekPlanController");
+<<<<<<< HEAD
 
 const route = express.Router({ mergeParams: true });
 
 // route.use(protect);
 
+=======
+const { getDayPlan } = require("../controllers/dayNameController");
+
+const route = express.Router({ mergeParams: true });
+
+route.use(protect);
+
+route.post("/:weekNum/day-names/:dayName", getDayPlan); // Gets specific week
+>>>>>>> forMerging
 route.get("/", getAllWeeks); // Gets all weeks for a subscription
 route.get("/:weekNum", getWeek); // Gets specific week
 // route.get("/current", getCurrentWeek); // Gets current week

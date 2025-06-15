@@ -19,16 +19,51 @@ exports.getAllWeeks = async (req, res, next) => {
 };
 exports.getWeek = async (req, res, next) => {
   try {
-    const week = await WeekPlan.find({
+    const weekData = await WeekPlan.find({
       subscription: req.params.subscriptionId,
       weekNumber: req.params.weekNum,
-    }).populate({ path: "days", populate: { path: "meals workout" } });
+    }).populate({
+      path: "days",
+      populate: [
+        {
+          path: "meals.meal", // Populate meals
+        },
+        {
+          path: "workout",
+          populate: {
+            path: "exercises.exercise", // Populate each exercise inside workout
+            select: "name",
+          },
+        },
+      ],
+    });
+
+    if (!weekData || weekData.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Week plan not found",
+      });
+    }
+
+    // Transform array of days into key-value pairs
+    const transformedWeek = {
+      ...weekData[0].toObject(),
+      days: weekData[0].days.reduce((acc, day) => {
+        acc[day.day] = {
+          _id: day._id,
+          meals: day.meals,
+          workout: day.workout,
+        };
+        return acc;
+      }, {}),
+    };
+
     res.status(200).json({
       status: "success",
-      data: week,
+      data: transformedWeek,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(404).json({
       status: "fail",
       message: "Could not get week plan",

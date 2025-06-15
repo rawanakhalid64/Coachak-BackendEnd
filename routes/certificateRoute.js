@@ -9,7 +9,7 @@ const {
 const { protect } = require("../controllers/authController");
 const route = express.Router();
 
-route.route("trainer/:id").get(protect, getTrainersCertificates);
+route.route("/trainer-certificate").post(protect, getTrainersCertificates);
 route.route("/").get(protect, getMyCertificates).post(protect, addCertificate);
 route
   .route("/:id")

@@ -9,6 +9,7 @@ const Trainer = require("../models/Trainer");
 
 exports.protect = async (req, res, next) => {
   try {
+    // console.log(req.headers);
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -40,6 +41,7 @@ exports.register = async (req, res, next) => {
       password,
       role,
       confirmPassword,
+      gender,
     } = req.body;
     if (password !== confirmPassword) {
       return res
@@ -55,7 +57,8 @@ exports.register = async (req, res, next) => {
       lastName,
       phoneNumber,
       dateOfBirth,
-      role,
+      gender,
+      role: role.toLowerCase(),
       password,
     });
     await user.save();
@@ -92,9 +95,13 @@ exports.verifyEmail = async (req, res, next) => {
     const { email, otp } = req.body;
     // check if email exists
     const existingUser = await verifyOtp(email, otp, res);
-    res
-      .status(200)
-      .json({ message: "email verified successfully", user: existingUser });
+    const role = (await User.findOne({ email })).role;
+    console.log(role);
+    res.status(200).json({
+      message: "email verified successfully",
+      user: existingUser,
+      role,
+    });
   } catch (error) {
     console.log(error.message);
     return res.status(400).json({ success: false, error: error.message });
@@ -105,7 +112,8 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
+    console.log(email);
+
     const checkedPassword = await bcrypt.compare(password, user.password);
     if (!checkedPassword) {
       return res
@@ -221,9 +229,9 @@ exports.resetPassword = async (req, res, next) => {
 exports.sendOtp = async (req, res, next) => {
   try {
     const { email } = req.body;
-    await createOtp(email);
+    const otp = await createOtp(email);
 
-    res.status(201).json({ message: "otp sent successfull" });
+    res.status(201).json({ message: "otp sent successfull", otp });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }

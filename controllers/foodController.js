@@ -1,5 +1,16 @@
 const Food = require("../models/Food");
 
+exports.getAllFoods = async (req, res, next) => {
+  try {
+    const foods = await Food.find();
+
+    res.status(200).json({ message: "Foods retrieved successfully", foods });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Cannot retrieve foods" });
+  }
+};
+
 exports.createFood = async (req, res, next) => {
   try {
     const { calories, carbohydrates, fats, name, protein } = req.body;

@@ -1,19 +1,54 @@
-const Meal = require("../models/Meal"); // assuming you have Meal model
 const DayPlan = require("../models/DayPlan");
 const NutritionPlan = require("../models/NutritionPlan");
+const Subscription = require("../models/Subscription");
 const TrainingPlan = require("../models/TrainingPlan");
+const WeekPlan = require("../models/WeekPlan");
 const Workout = require("../models/Workout");
 
-exports.getDayPlans = async (req, res, next) => {
+exports.getDayPlan = async (req, res, next) => {
   try {
-    const { id: subscription } = req.param;
-    const dayPlans = await DayPlan.find({ subscription })
-      .populate("workout")
-      .populate("meals");
+    const { weekNum, dayName } = req.params;
+    console.log(req.body);
+    const subscriptionId = (
+      await Subscription.findOne({
+        client: req.body.client,
+        trainer: req.user.id,
+      })
+    )._id;
 
+    const dayPlan = await WeekPlan.findOne({
+      subscription: subscriptionId,
+      weekNumber: weekNum,
+    }).populate({
+      path: "days",
+      populate: [
+        {
+          path: "meals.meal",
+          model: "Meal",
+        },
+        {
+          path: "workout",
+          populate: {
+            path: "exercises.exercise",
+            model: "Exercise",
+          },
+        },
+      ],
+    });
+
+    if (!dayPlan) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Week plan not found",
+      });
+    }
+
+    const returnedDay = dayPlan.days.find(
+      (day) => day.day.toLowerCase() === dayName.toLowerCase()
+    );
     res.status(200).json({
       status: "success",
-      dayPlans,
+      day: returnedDay,
     });
   } catch (error) {
     console.log(error);
@@ -23,53 +58,37 @@ exports.getDayPlans = async (req, res, next) => {
     });
   }
 };
-
 exports.addSingleMealForDay = async (req, res, next) => {
   try {
-    let { meal, type } = req.body;
+    const { meal, type } = req.body;
 
+    // Step 1: Push the new meal entry
     const updatedDay = await DayPlan.findById(req.params.dayId);
+    updatedDay.meals.push({ meal, type });
+    await updatedDay.save();
     if (!updatedDay) {
       return res.status(404).json({ message: "Day not found" });
     }
 
-    // Check if meal is ObjectId (existing meal) or string (new meal name)
-    const mongoose = require("mongoose");
-    const isValidObjectId = mongoose.Types.ObjectId.isValid(meal);
+    // Step 2: Get the last meal (just added)
+    const lastMeal = updatedDay.meals[updatedDay.meals.length - 1];
 
-    let mealId;
-
-    if (isValidObjectId) {
-      // assume meal already exists
-      const existingMeal = await Meal.findById(meal);
-      if (!existingMeal) {
-        return res.status(404).json({ message: "Meal not found" });
-      }
-      mealId = existingMeal._id;
-    } else {
-      // assume meal is string (meal name), create new meal
-      const newMeal = new Meal({ name: meal, creator: req.user.id });
-      await newMeal.save();
-      mealId = newMeal._id;
+    if (!lastMeal) {
+      return res.status(500).json({ message: "Meal push failed" });
     }
 
-    // Push the meal into DayPlan
-    updatedDay.meals.push({ meal: mealId, type });
-    await updatedDay.save();
-
-    // Populate meals
+    // Step 3: Populate the last meal
     const populatedDay = await DayPlan.findById(updatedDay._id).populate(
       "meals.meal"
     );
 
-    // Get the last meal (just added one)
-    const lastMeal = populatedDay.meals.find(
-      (m) => m.meal._id.toString() === mealId.toString()
+    const populatedLastMeal = populatedDay.meals.find(
+      (m) => m._id.toString() === lastMeal._id.toString()
     );
 
     return res.status(200).json({
       message: "Meal added successfully",
-      meal: lastMeal,
+      meal: populatedLastMeal,
       day: updatedDay._id,
     });
   } catch (error) {

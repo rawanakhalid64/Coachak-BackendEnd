@@ -8,6 +8,21 @@ const createIngredients = async (ingredients, creator) => {
     });
   } else return ingredients;
 };
+
+exports.getAllMeals = async (req, res, next) => {
+  try {
+    const meals = await Meal.find();
+    if (!meals) {
+      return res
+        .status(404)
+        .json({ message: "no meals found", error: error.message });
+    }
+    res.status(201).json({ message: "meal retrieved successfull", meals });
+  } catch (error) {
+    res.status(404).json({ message: "cannot get meals", error: error.message });
+  }
+};
+
 exports.createMeal = async (req, res, next) => {
   try {
     const { name, description, ingredients, notes, type, videoUrl } = req.body;

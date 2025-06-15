@@ -34,3 +34,16 @@ exports.editExercise = async (req, res, next) => {
     res.status(404).json({ message: "cannot edit exercise" });
   }
 };
+exports.getAllExercises = async (req, res, next) => {
+  try {
+    const exercises = await Exercise.find();
+
+    res.status(200).json({
+      message: "Exercises fetched successfully",
+      exercises,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Cannot fetch exercises" });
+  }
+};
