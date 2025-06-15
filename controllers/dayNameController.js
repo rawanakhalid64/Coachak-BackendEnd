@@ -9,13 +9,24 @@ exports.getDayPlan = async (req, res, next) => {
   try {
     const { weekNum, dayName } = req.params;
     console.log(req.body);
-    const subscriptionId = (
-      await Subscription.findOne({
+    let subscriptionId;
+    if (req.user.role.toLowerCase() === "trainer") {
+      console.log("object");
+      subscriptionId = await Subscription.findOne({
         client: req.body.client,
         trainer: req.user.id,
-      })
-    )._id;
-
+      });
+    } else {
+      subscriptionId = await Subscription.findOne({
+        client: req.user.id,
+        trainer: req.body.trainer,
+      });
+    }
+    // subscriptionId = await Subscription.find({
+    //   trainer: "67f64d418b5879558d70c160",
+    //   client: "6843102faded2931eaa488d1",
+    // });
+    console.log(subscriptionId);
     const dayPlan = await WeekPlan.findOne({
       subscription: subscriptionId,
       weekNumber: weekNum,

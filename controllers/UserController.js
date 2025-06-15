@@ -150,41 +150,46 @@ exports.getProfile = async (req, res, next) => {
 exports.getAllTrainers = async (req, res, next) => {
   try {
     const trainers = await Trainer.find()
-      .populate('areaOfExpertise', 'name')
-      .select('-password');
-    
-    // Get certificates and ratings for each trainer
-    const trainersWithDetails = await Promise.all(trainers.map(async (trainer) => {
-      const certificates = await Certificate.find({ credintialId: trainer._id });
-      const [ratings, programs] = await Promise.all([
-        Rating.find({ trainer: trainer._id })
-          .populate('user', 'firstName lastName profilePhoto')
-          .sort('-createdAt'),
-        Program.find({ 'trainers.trainer': trainer._id })
-          .select('title icon description')
-      ]);
-      
-      return {
-        ...trainer.toObject(),
-        certificates,
-        ratings,
-        programs,
-        ratingStats: {
-          count: ratings.length,
-          averageRating: trainer.avgRating || 0
-        }
-      };
-    }));
+      .populate("areaOfExpertise", "name")
+      .select("-password");
 
-    res.status(200).json({ 
-      message: "Trainers retrieved successfully", 
+    // Get certificates and ratings for each trainer
+    const trainersWithDetails = await Promise.all(
+      trainers.map(async (trainer) => {
+        const certificates = await Certificate.find({
+          credintialId: trainer._id,
+        });
+        const [ratings, programs] = await Promise.all([
+          Rating.find({ trainer: trainer._id })
+            .populate("user", "firstName lastName profilePhoto")
+            .sort("-createdAt"),
+          Program.find({ "trainers.trainer": trainer._id }).select(
+            "title icon description"
+          ),
+        ]);
+
+        return {
+          ...trainer.toObject(),
+          certificates,
+          ratings,
+          programs,
+          ratingStats: {
+            count: ratings.length,
+            averageRating: trainer.avgRating || 0,
+          },
+        };
+      })
+    );
+
+    res.status(200).json({
+      message: "Trainers retrieved successfully",
       count: trainers.length,
-      trainers: trainersWithDetails
+      trainers: trainersWithDetails,
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Error retrieving trainers",
-      error: error.message 
+      error: error.message,
     });
   }
 };
@@ -192,8 +197,8 @@ exports.getAllTrainers = async (req, res, next) => {
 exports.getTrainerById_R = async (req, res, next) => {
   try {
     const trainer = await Trainer.findById(req.params.id)
-      .populate('areaOfExpertise', 'name')
-      .select('-password');
+      .populate("areaOfExpertise", "name")
+      .select("-password");
 
     if (!trainer) {
       return res.status(404).json({ message: "Trainer not found" });
@@ -203,10 +208,11 @@ exports.getTrainerById_R = async (req, res, next) => {
     const certificates = await Certificate.find({ credintialId: trainer._id });
     const [ratings, programs] = await Promise.all([
       Rating.find({ trainer: trainer._id })
-        .populate('user', 'firstName lastName profilePhoto')
-        .sort('-createdAt'),
-      Program.find({ 'trainers.trainer': trainer._id })
-        .select('title icon description')
+        .populate("user", "firstName lastName profilePhoto")
+        .sort("-createdAt"),
+      Program.find({ "trainers.trainer": trainer._id }).select(
+        "title icon description"
+      ),
     ]);
 
     res.status(200).json({
@@ -218,24 +224,24 @@ exports.getTrainerById_R = async (req, res, next) => {
         programs,
         ratingStats: {
           count: ratings.length,
-          averageRating: trainer.avgRating || 0
-        }
-      }
+          averageRating: trainer.avgRating || 0,
+        },
+      },
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Error retrieving trainer",
-      error: error.message 
+      error: error.message,
     });
   }
 };
-exports.getTrainerById=(req,res,next)=>{
-  try{
-  const trainers = await Trainer.find().select("-password -isVerified -role");
-  res
-    .status(200)
-    .json({ message: "trainers retrieved successful", trainers });
-} catch (error) {
-  res.status(404).json({ message: "error in getting trainers" });
-}
-}
+exports.getTrainerById = async (req, res, next) => {
+  try {
+    const trainers = await Trainer.find().select("-password -isVerified -role");
+    res
+      .status(200)
+      .json({ message: "trainers retrieved successful", trainers });
+  } catch (error) {
+    res.status(404).json({ message: "error in getting trainers" });
+  }
+};
