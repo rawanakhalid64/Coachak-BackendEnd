@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -14,7 +15,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "Email is required."],
       type: String,
       unique: [true, "Email already exists."],
-      match: [/.+\@.+\..+/, "Please enter a valid email address."], // Simple regex for email validation
+      match: [/.+\@.+\..+/, "Please enter a valid email address."],
     },
     password: {
       type: String,
@@ -30,15 +31,6 @@ const userSchema = new mongoose.Schema(
       unique: [true, "phone number already exists."],
       required: [true, "Please provide a phone number."],
     },
-    // role: {
-    //   type: String,
-    //   default: "client",
-    //   enum: {
-    //     values: ["admin", "trainer", "client"],
-    //     message: "Please choose a valid role (admin, trainer, or client).",
-    //   },
-    //   required: [true, "Role is required."],
-    // },
     lastLogin: { type: Date },
     gender: { type: String },
     isVerified: { type: Boolean, default: false },
@@ -48,6 +40,7 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "AreaOfExpertise",
     },
+
     profilePhoto: {
       default:
         "https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg",
@@ -57,19 +50,46 @@ const userSchema = new mongoose.Schema(
   {
     discriminatorKey: "role",
     timestamps: true,
+    toJSON: { virtuals: true }, // <-- add this to make virtuals appear in JSON
+    toObject: { virtuals: true }, // <-- add this to make virtuals appear in object
   }
 );
+
+// Password hashing middleware
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
-// userSchema.pre("save", function (next) {
-//   if (!this.isVerified) {
-//     next(new Error("please verify your acount first"));
-//   }
-//   next();
-// });
+
+// Virtual populate for certificates
+userSchema.virtual("certificates", {
+  ref: "Certificate", // model to populate from
+  localField: "_id", // user's _id
+  foreignField: "credintialId", // field in certificate model that references user
+});
+
+// Auto-populate certificates on every find
+userSchema.pre(/^find/, function (next) {
+  this.populate("certificates");
+  next();
+});
+
+// Virtual for calculating age
+userSchema.virtual("age").get(function () {
+  if (!this.dateOfBirth) return null;
+  const today = new Date();
+  let age = today.getFullYear() - this.dateOfBirth.getFullYear();
+  const monthDiff = today.getMonth() - this.dateOfBirth.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < this.dateOfBirth.getDate())
+  ) {
+    age--;
+  }
+  return age;
+});
+
 const User = mongoose.model("User", userSchema);
 module.exports = User;

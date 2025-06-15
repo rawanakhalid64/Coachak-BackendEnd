@@ -43,7 +43,7 @@ exports.getMySubscriptions = async (req, res, next) => {
   try {
     console.log(req.user.id);
     const subscriptions = await Subscription.find({
-      trainer: req.user.id,
+      [req.user.role]: req.user.id,
     })
       .populate({ path: "plan", select: "title" })
       .populate({ path: "client", select: "firstName lastName profilePhoto" })

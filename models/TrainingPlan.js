@@ -13,5 +13,6 @@ const trainingPlanSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const TrainingPlan = mongoose.model("TrainingPlan", trainingPlanSchema);
 module.exports = TrainingPlan;
